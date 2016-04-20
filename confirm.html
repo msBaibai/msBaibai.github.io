@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>在线点餐</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				body{
+					background-color: rgba(185, 185, 185, 0.19);
+				}
+				.sectionConfirm{
+					margin-top: 3px;
+				}
+				.sectionConfirm>ul:nth-of-type(1){
+					margin: 0;
+					padding: 0;
+					width: 100%;
+					overflow-x: hidden;
+					list-style: none;
+					border-top: 1px rgba(138, 137, 137, 0.14) solid;
+				}
+				.sectionConfirm>ul:nth-of-type(1)>li{
+					width: 100%;
+					height: 42px;
+					margin-bottom: 1px;
+					position: relative;
+					background-color: #FFFFFF;
+					border-bottom: 1px rgba(138, 137, 137, 0.14) solid;
+					font-size: 15px;
+					line-height: 42px;
+					padding-left: 4%;
+				}
+				.sectionConfirm>ul:nth-of-type(1)>li>span{
+					position: absolute;
+					right: 12px;
+					color: #8A8989;
+					letter-spacing: 3px;
+				}
+				.sectionConfirm>label{
+					width: auto;
+					display: block;
+					font-size: 14px;
+					margin-left: 13px;
+					color: #717171;
+					line-height: 38px;
+				}
+				.sectionConfirm>ul:nth-of-type(2){
+					margin: 0;
+					padding: 0px 8px;
+					width: 100%;
+					overflow-x: hidden;
+					list-style: none;
+					text-align: center;
+				}
+				.sectionConfirm>ul:nth-of-type(2)>li{
+					display: inline;
+					padding: 8px 15px;
+					background-color: #FFFFFF;
+					font-size: 20px;
+					margin: 8px 8px;
+					color: #999999;
+					box-shadow: 0px 0px 2px #333333;
+					border-radius: 3px;
+					cursor: pointer;
+					line-height: 50px;
+				}
+				.sectionConfirm>ul:nth-of-type(2)>li.active{
+					background-color: #337AB7;
+					color: #FFFFFF;
+					box-shadow: inset 0px 0px 2px #405D75;
+				}
+				.confirmBox{
+					width: 100vw;
+					height: 100vh;
+					position: fixed;
+					top: -3000px;
+					margin: 0;
+					padding: 0;
+					background-color: rgba(0,0,0,0.3);
+					transition: top 0s 0.125s;
+					-webkit-transition: top 0s 0.125s;
+				}
+				.confirmBox>div{
+					position: absolute;
+					width: 260px;
+					height: auto;
+					top: 35%;
+					left: 50%;
+					margin: -10vh 0 0 -130px;
+					background-color: #FFFFFF;
+					border-radius: 10px;
+					opacity: 0;
+					-webkit-transform: scale(1.15,1.15);
+					transition: opacity 0.125s,-webkit-transform 0.125s;
+					-webkit-transition: opacity 0.125s,-webkit-transform 0.125s;
+				}
+				.confirmBox>div>span:nth-of-type(1){
+					width: 100%;
+					display: block;
+					text-align: center;
+					line-height: 30px;
+					font-size: 16px;
+					font-weight: bold;
+					margin-top: 5px;
+					color:#000000;
+				}
+				.confirmBox>div>span:nth-of-type(2){
+					width: 100%;
+					display: block;
+					text-align: center;
+					line-height: 22px;
+					padding-left: 40px;
+					padding-right: 40px;
+					margin-bottom: 10px;
+					font-size: 13px;
+					color: #333333;
+				}
+				.confirmBox>div>div{
+					width: 100%;
+					height: 40px;
+					border-top: 1px rgba(115, 115, 115, 0.38) solid;
+					cursor: pointer;
+				}
+				.confirmBox>div>div>span:nth-of-type(1){
+					width: 50%;
+					height: 40px;
+					display: inline-block;
+					font-size: 15px;
+					line-height: 40px;
+					text-align: center;
+					border-bottom-left-radius: 10px;
+					box-sizing: border-box;
+					font-weight: 400;
+					border-right: 1px rgba(115, 115, 115, 0.38) solid;
+					background-color: #FFFFFF;
+					color:#2E6BB3;
+				}
+				.confirmBox>div>div>span:nth-of-type(2){
+					width: 50%;
+					height: 40px;
+					display: inline-block;
+					font-size: 15px;
+					line-height: 40px;
+					text-align: center;
+					border-bottom-right-radius: 10px;
+					box-sizing: border-box;
+					font-weight: 400;
+					border-left: 1px rgba(0,0,0,0) solid;
+					background-color: #FFFFFF;
+					color:#2E6BB3;
+				}
+				.confirmBox>div>div>span:nth-of-type(1):active{
+					background-color: rgb(240, 240, 240);
+				}
+				.confirmBox>div>div>span:nth-of-type(2):active{
+					background-color: rgb(240, 240, 240);
+				}
+				
+				.confirmBox.show{
+					top: 0px;
+					transition: none;
+					-webkit-transition: none;
+				}
+				.confirmBox.show>div{
+					opacity: 1;
+					-webkit-transform: scale(1,1);
+				}
+				
+			</style>
+			<header class="header">
+				<h4>订单确认</h4>
+				<a href="#menu.html"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<a class="confirmSubmit"><span class="glyphicon glyphicon-ok"></span></a>
+			</header>
+			<section class="sectionConfirm">
+				<label>请确认您所点的餐品:</label>
+				<ul>
+				</ul>
+				<label>请选择您当前的餐位:</label>
+				<ul>
+					<li>01</li>
+					<li>02</li>
+					<li>03</li>
+					<li>04</li>
+					<li>05</li>
+					<li>06</li>
+					<li>07</li>
+					<li>08</li>
+					<li>09</li>
+					<li>10</li>
+					<li>11</li>
+					<li>12</li>
+					<li>外送</li>
+				</ul>
+			</section>
+			<div class="confirmBox">
+				<div>
+					<span>订单确认</span>
+					<span>是否确认提交？</span>
+					<div>
+						<span>是</span>
+						<span>否</span>
+					</div>
+				</div>
+			</div>
+			<script>
+				$.init=function(){
+					var liClickActive=function(){
+						$(".sectionConfirm>ul:eq(1)>li.active").removeClass("active");
+						$(this).addClass("active");
+					}
+					var confirmBoxShow=function(){
+						$(".confirmBox").addClass("show");
+					}
+					var confirmBoxHide=function(){
+						$(".confirmBox").removeClass("show");
+					}
+					var confirmBoxOK=function(){
+						window.location.hash="payment.html";
+					}
+					$.tap(".sectionConfirm>ul:eq(1)>li",liClickActive);
+					$.tap(".confirmSubmit",confirmBoxShow);
+					$.tap(".confirmBox>div>div>span:eq(1)",confirmBoxHide);
+					$.tap(".confirmBox>div>div>span:eq(0)",confirmBoxOK);
+					var sectionConfirmUlList="";
+					var total=0;
+					for(var i in menuData){
+						var valJson=menuData[i];
+						total+=valJson.price*valJson.num;
+						sectionConfirmUlList+="<li>"+valJson.name+"<span>&yen;<b>"+valJson.price+"</b>&times;<b>"+valJson.num+"</b></span></li>";
+					}
+					sectionConfirmUlList+="<li>总计:<span>&yen;<b>"+total+"</b></span></li>";
+					$.confirmTotal=total;
+					$(".sectionConfirm>ul:eq(0)").html(sectionConfirmUlList);
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>在线点餐</title>
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/icon.png">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta content="white" name="apple-mobile-web-app-status-bar-style">
+		<meta content="telephone=no" name="format-detection">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="css/loading.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+		<script type="text/javascript" src="js/bmob-min.js" ></script>
+		<script>
+			(function($){
+				function IsPC() {
+				    var userAgentInfo = navigator.userAgent;
+				    var Agents = ["Android", "iPhone",
+				                "SymbianOS", "Windows Phone",
+				                "iPad", "iPod"];
+				    var flag = true;
+				    for (var v = 0; v < Agents.length; v++) {
+				        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+				            flag = false;
+				            break;
+				        }
+				    }
+				    return flag;
+				}
+				$.isPC=IsPC();
+			})(jQuery);
+		</script>
+		<script type="text/javascript" src="js/common.js" ></script>
+		<script type="text/template" id="sectionMenuTplt" style="display: none;">
+			<li foodId="{[id]}">
+				<img src="{[img]}" />
+				<span>{[name]}</span>
+				<span>{[price]}元</span>
+				<span>原价：{[oldPrice]}元</span>
+				<span>已点<b>0</b>份</span>
+				<div>
+					<button class="disable"><span class="glyphicon glyphicon-minus"></span></button>
+					<input type="number" readonly="readonly" value="0" />
+					<button><span class="glyphicon glyphicon-plus"></span></button>
+				</div>
+			</li>
+		</script>
+		<script>
+			(function($){
+				var u = navigator.userAgent;
+				var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+				var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+				$.isAndroid=isAndroid;
+				$.isiOS=isiOS;
+				
+				$.isOK=1;
+				$.isLoadOK=function(){
+					$.isOK++;
+					if($.isOK==3){
+						$.isOK=1;
+						isInitLoadData=true;
+						$(".navMenu>ul").html($.menu_navMenu_ulData);
+						$(".sectionMenu>ul").html($.menu_sectionMenu_ulData);
+					}
+				}
+				
+				Bmob.initialize("9a0f83e3dbc4d00ea378b0af4023d9b8", "0ea01cc6e2669702ff1cb2dc6f2c6000");
+				/*
+					加载菜单数据
+				*/
+				var foodType = Bmob.Object.extend("foodType");
+				var query = new Bmob.Query(foodType);
+				var navMenuTplt="<li typeId=\"{[id]}\">{[name]}<span class=\"glyphicon glyphicon-menu-right\"></span></li>";
+				query.ascending("orderId");
+				$.menu_navMenu_ulData="<li typeId=\"\">全部<span class=\"glyphicon glyphicon-menu-right\"></span></li>";
+				var tpltVal="";
+				query.find({
+				  success: function(results) {
+				    for (var i = 0; i < results.length; i++) {
+				      var object = results[i];
+				      tpltVal=$.listSetVal(navMenuTplt,"id",object.id);
+				      tpltVal=$.listSetVal(tpltVal,"name",object.get('name'));
+				      $.menu_navMenu_ulData+=tpltVal;
+				    }
+				    $.isLoadOK();
+				  },
+				  error: function(error) {
+				    alert("查询失败: " + error.code + " " + error.message);
+				  }
+				});
+				/*
+				 * 加载列表数据
+				 */
+				var food = Bmob.Object.extend("food");
+				var query = null;
+				var sectionMenuTplt=document.getElementById("sectionMenuTplt").innerHTML;
+				function selectList(typeId,fn){
+					query = new Bmob.Query(food);
+					query.ascending("orderId");
+					if(!!typeId)
+						query.equalTo("foodType", typeId);
+					$.menu_sectionMenu_ulData="";
+					var tpltVal="";
+					query.find({
+					  success: function(results) {
+					  	
+					    for (var i = 0; i < results.length; i++) {
+					      var object = results[i];
+					      tpltVal=$.listSetVal(sectionMenuTplt,"id",object.id);
+					      tpltVal=$.listSetVal(tpltVal,"name",object.get('name'));
+					      tpltVal=$.listSetVal(tpltVal,"price",object.get('price'));
+					      tpltVal=$.listSetVal(tpltVal,"oldPrice",object.get('oldPrice'));
+					      var imgUrl=object.get('img')._url;
+					      imgUrl=imgUrl.replace("http://file.bmob.cn/","");
+					      tpltVal=$.listSetVal(tpltVal,"img",imgUrl);
+					      $.menu_sectionMenu_ulData+=tpltVal;
+					    }
+					    if(!!fn)
+					    	fn($.menu_sectionMenu_ulData);
+					  },
+					  error: function(error) {
+					    alert("查询失败: " + error.code + " " + error.message);
+					  }
+					});
+				}
+				selectList(null,function(){
+					$.isLoadOK();
+				});
+				$.menu_function_selectList=selectList;
+			})($);
+		</script>
+		<script type="text/javascript" src="js/openPage.js" ></script>
+		
+		
+		
+		<style type="text/css">
+			*{
+				backface-visibility: hidden;
+			}
+			body{
+				margin: 0;
+				padding: 0;
+				font-size: 0px;
+				font-family: 'Helvetica Neue',Helvetica,sans-serif;
+				-webkit-user-select: none;
+				overflow-x: hidden;
+			}
+			body>div{
+				transition:-webkit-transform 0.25s;
+				-webkit-transition:-webkit-transform 0.25s;
+				transform: translateX(0%);
+				-webkit-transform: translateX(0%);
+			}
+			::-webkit-scrollbar{  
+	            width:1px;  
+	        }  
+	        ::-webkit-scrollbar-button {  
+	  			
+	        }  
+	        ::-webkit-scrollbar-track{  
+	            background-color:rgba(225,225,225,0);  
+	        }  
+	        ::-webkit-scrollbar-track-piece{  
+	            background-color:rgba(225,225,225,0); 
+	            -webkit-border-radius:4px;  
+	        }  
+	        ::-webkit-scrollbar-thumb{  
+	            background-color:rgba(225,225,225,0); 
+	            border:solid 1px #C0C0C0;  
+	            border-radius:4px;  
+	            //background: linear-gradient(to right,#E3E3E3 0,#F5FFFA 100%);
+	            
+	        }  
+	        ::-webkit-scrollbar-corner {  
+	            //background-color: #E0EEEE;  
+	            background-color:rgba(225,225,225,0); 
+	        }  
+	        ::-webkit-resizer {  
+	            /*background-image: url(/public/img/resizer-inactive.png);*/  
+	           background-repeat: no-repeat;  
+	           background-position: bottom right;  
+	        }  
+	        ::-webkit-scrollbar-thumb:hover{  
+	            background-color:rgba(225,225,225,0);  
+	        }
+			.header{
+				width: 100%;
+				height: 44px;
+				//background-color: #f7f7f7;
+				background-color: #ffffff;
+				margin: 0;
+				padding: 0;
+				position: relative;
+				box-shadow: 0px 1px 3px #CCCCCC;
+			}
+			.header>a{
+				width: 44px;
+				height: 44px;
+				display: inline-block;
+				font-size: 20px;
+				position: absolute;
+				top: 0px;
+				text-align: center;
+				line-height: 44px;
+				//background-color: #0EC7AF;
+			}
+			.header>a:nth-of-type(1){
+				left: 0px;
+			}
+			.header>a:nth-of-type(2){
+				right: 0px;
+			}
+			.header>h4{
+				width: calc(100% - 88px);
+				height: 100%;
+				display: inline-block;
+				padding: 0;
+				position: absolute;
+				left: 0px;
+				right: 0px;
+				margin: 0 auto;
+				text-align: center;
+				line-height: 44px;
+				font-size: 18px;
+			}
+			.navMenu{
+				width: 70%;
+				height: 100%;
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				transition:-webkit-transform 0.25s;
+				-webkit-transition:-webkit-transform 0.25s;
+				-webkit-transform: translateX(-100%);
+				background-color: #333333;
+				display: block;
+			}
+			.navMenu>h3{
+				font-size: 20px;
+				color: #FFFFFF;
+				padding-left: 20px;
+				padding-right: 20px;
+				font-weight: bold;
+			}
+			.navMenu>p{
+				font-size: 12px;
+				color: #B3B2B2;
+				padding-left: 20px;
+				padding-right: 20px;
+			}
+			.navMenu>ul{
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				border-top: 1px rgba(0,0,0,0.3) solid;
+			}
+			.navMenu>ul>li{
+				width: 100%;
+				height: 42px;
+				font-size: 16px;
+				color: #FFFFFF;
+				border-bottom: 1px rgba(0,0,0,0.3) solid;
+				line-height: 42px;
+				position: relative;
+				border-left: 22px #333333 solid;
+			}
+			.navMenu>ul>li:active{
+				background-color: #222222;
+				border-left-color: #222222;
+			}
+			
+			.navMenu>ul>li>span{
+				position: absolute;
+				right: 15px;
+				font-size: 16px;
+				color: #FFFFFF;
+				line-height: 42px;
+			}
+			.navMenu+aside{
+				width: 30%;
+				height: 100%;
+				display: block;
+				left: 70%;
+				position: fixed;
+				display: none;
+			}
+			
+			.menuListShow{
+				transition:-webkit-transform 0.25s;
+				-webkit-transition:-webkit-transform 0.25s;
+				transform: translateX(70%);
+				-webkit-transform: translateX(70%);
+			}
+			
+			.menuListShow+.navMenu{
+				transform: translateX(0%);
+				-webkit-transform: translateX(0%);
+			}
+			.menuListShow~aside{
+				display: block;
+			}
+		</style>
+		<style id="ifWxStyle">
+			.menuListShow{
+				-webkit-filter: blur(3px);
+			}
+		</style>
+		<script>
+			(function($){
+				function isWeiXin(){
+				    var ua = window.navigator.userAgent.toLowerCase();
+				    if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+				        return true;
+				    }else{
+				        return false;
+				    }
+				}
+				$.isWeiXin=isWeiXin();
+				if($.isWeiXin&&$.isAndroid){
+					$("#ifWxStyle").remove();
+				}
+			})(jQuery);
+			
+		</script>
+	</head>
+	<body>
+		<div>
+			<style type="text/css">
+				.sectionMenu{
+					margin-top: 3px;
+					height: 91%;
+					height: calc(100% - 47px);
+					overflow-y:auto;
+				}
+				.sectionMenu>ul{
+					margin: 0;
+					padding: 0;
+					width: 100%;
+					overflow-x: hidden;
+					list-style: none;
+				}
+				.sectionMenu>ul>li{
+					width: 100%;
+					height: 80px;
+					margin-bottom: 2px;
+					position: relative;
+					background-color: #f7f7f7;
+					box-shadow: 0px 0px 3px #CCCCCC;
+					transition: -webkit-transform 0.25s;
+					-webkit-transition: -webkit-transform 0.25s;
+					cursor: pointer;
+				}
+				
+				.sectionMenu>ul>li>img{
+					width: 80px;
+					height: 60px;
+					position: absolute;
+					left: 10px;
+					top: 10px;
+				}
+				
+				.sectionMenu>ul>li>span{
+					position: absolute;/**/
+				}
+				
+				.sectionMenu>ul>li>span:nth-of-type(1){
+					width: auto;
+					width: calc(100% - 100px);
+					top: 10px;
+					left: 100px;
+					font-size: 18px;
+				}
+				
+				.sectionMenu>ul>li>span:nth-of-type(2){
+					width: 30px;
+					bottom: 10px;
+					left: 100px;
+					font-size: 14px;
+					color: #0EC7AF;
+				}
+				.sectionMenu>ul>li>span:nth-of-type(3){
+					width: 80px;
+					bottom: 10px;
+					left: 130px;
+					font-size: 12px;
+					text-decoration: line-through;
+					color: #CCCCCC;
+				}
+				.sectionMenu>ul>li>span:nth-of-type(4){
+					width: 80px;
+					top: 30px;
+					right: 30px;
+					font-size: 14px;
+					color: #333333;
+					letter-spacing: 2px;
+					text-align: right;
+				}
+				.sectionMenu>ul>li>span:nth-of-type(4)>b{
+					font-size: 18px;
+					color: #E05841;
+				}
+				.sectionMenu>ul>li>div{
+					width: 120px;
+					height: 100%;
+					position: absolute;
+					right: -120px;
+					text-align: center;
+					background-color: #F7F7F7;
+					box-shadow: 0px 0px 3px #CCCCCC;
+				}
+				.sectionMenu>ul>li>div>button{
+					font-size: 14px;
+					display: inline-block;
+					width: 34px;
+					height: 34px;
+					position: relative;
+					top: 23px;
+					border: 1px #CCCCCC solid;
+					background-color: #FFFFFF;
+					outline: none;
+					color: #696969;
+					box-sizing: border-box;
+					float: left;
+					left: 9px;
+				}
+				.sectionMenu>ul>li>div>button:active{
+					border: 1px #2E6BB3 solid;
+					background-color: #2E6BB3;
+					color: #FFFFFF;
+				}
+				.sectionMenu>ul>li>div>button.disable{
+					color: #cccccc;
+				}
+				.sectionMenu>ul>li>div>button:nth-of-type(1){
+					border-top-left-radius: 5px;
+					border-bottom-left-radius: 5px;
+				}
+				.sectionMenu>ul>li>div>button:nth-of-type(2){
+					border-top-right-radius: 5px;
+					border-bottom-right-radius: 5px;
+				}
+				.sectionMenu>ul>li>div>button>span{
+					position: absolute;
+					line-height: 30px;
+					left: 10px;
+				}
+				.sectionMenu>ul>li>div>input{
+					font-size: 14px;
+					display: inline-block;
+					width: 34px;
+					height: 34px;
+					position: relative;
+					top: 23px;
+					outline: none;
+					border: 1px #CCCCCC solid;
+					background-color: #FFFFFF;
+					box-shadow: none;
+					border-radius: 0px;
+					-webkit-appearance: none;
+					box-sizing: border-box;
+					float: left;
+					text-align: center;
+					left: 9px;
+				}
+				.sectionMenu>ul>li>div>input::-webkit-inner-spin-button,.sectionMenu>ul>li>div>input::-webkit-outer-spin-button{
+					-webkit-appearance: none;
+					margin: 0;
+				}
+				.sectionMenu>ul>li.active{
+					-webkit-transform: translateX(-120px);
+				}
+			</style>
+			<header class="header">
+				
+				<h4>在线点餐</h4>
+				<a class="menuListShowBtn"><span class="glyphicon glyphicon-align-justify"></span></a>
+				<a href="#confirm.html" class="toHref"><span class="glyphicon glyphicon-ok"></span></a>
+			</header>
+			<section class="sectionMenu">
+				<ul>
+					
+				</ul>
+			</section>
+			<footer>
+				
+			</footer>
+			<script type="text/javascript">
+			var menuData={};
+			function menuDataAdd(key,val){
+				menuData[key]=val;
+				sessionStorage.setItem("menuData",JSON.stringify(menuData));
+			}
+			function menuDataSetList(){
+				if(JSON.stringify(menuData)!="{}"){
+					for(var i in menuData){
+						var li=$(".sectionMenu>ul>li[foodId='"+i+"']");
+						var valJson=menuData[i];
+						li.children("span").children("b").html(valJson.num);
+						li.children("div").children("input").val(valJson.num);
+						li.children("div").children("button:eq(0)").removeClass("disable");
+					}
+				}
+			}
+			var isInitLoad=false;
+			var isInitLoadData=false;
+			$.init=function(){
+				if(JSON.stringify(menuData)=="{}"){
+					menuData=$.parseJSON(sessionStorage.getItem("menuData"));
+					if(!menuData)
+						menuData={};
+				}
+				isInitLoad=true;
+//					window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) {
+//				       var str="";
+//				       str+="错误信息："+errorMessage+"\n";
+//				       str+="出错文件："+scriptURI+"\n";
+//				       str+="出错行号："+lineNumber+"\n";
+//				       str+="出错列号："+columnNumber+"\n";
+//				       str+="错误详情："+errorObj+"\n";
+//				       alert(str);
+//				    }
+					//$.preLoadPage("confirm.html");
+					$.preLoadPage("confirm.html");
+					var liClick=function(e){
+						e.stopPropagation();
+						var bol=true;
+						if($(this).hasClass("active"))
+							bol=false;
+						$(".sectionMenu>ul>li.active").removeClass("active");
+						if(bol)
+							$(this).addClass("active");
+					}
+
+					var btn0Click=function(e){
+						var input=$(this).next();
+						var val=parseInt(input.val());
+						if(val==1)
+							$(this).addClass("disable");
+						else if(val==0)
+							return;
+						input.val(val-1);
+						var li=$(this).parent().parent();
+						var nameSpan=li.children("img").next();
+						var priceSpan=nameSpan.next();
+						var valJson={};
+						valJson.num=val-1;
+						valJson.name=nameSpan.html();
+						valJson.price=parseFloat(priceSpan.html());
+						menuDataAdd($(this).parent().parent().attr("foodId"),valJson);
+						$(this).parent().prev().children("b").html((val-1));
+					}
+					var btn1Click=function(e){
+						var input=$(this).prev();
+						var val=parseInt(input.val());
+						if(val==0)
+							input.prev().removeClass("disable");
+						input.val(val+1);
+						var li=$(this).parent().parent();
+						var nameSpan=li.children("img").next();
+						var priceSpan=nameSpan.next();
+						var valJson={};
+						valJson.num=val+1;
+						valJson.name=nameSpan.html();
+						valJson.price=parseFloat(priceSpan.html());
+						
+						menuDataAdd($(this).parent().parent().attr("foodId"),valJson);
+						$(this).parent().prev().children("b").html((val+1));
+					}
+					
+					var stopClick=function(e){
+						e.stopPropagation();
+					}
+					var menuListShowBtnClick=function(e){
+						e.stopPropagation();
+						$("body>div").addClass("menuListShow");	
+					}
+					
+					
+					
+					function bindLiEvent(){
+						if(!$.isPC){
+//							$(".sectionMenu>ul>li").each(function(){
+//								$.touchObj($(this),"click",liClick);
+//							});
+							$(".sectionMenu>ul>li").each(function(){
+								$(this).find("div>button:eq(0)").on("touchend",btn0Click);
+								$(this).find("div>button:eq(1)").on("touchend",btn1Click);
+							});
+						}else{
+							$(".sectionMenu>ul>li").each(function(){
+								$(this).find("div>button:eq(0)").on("click",btn0Click);
+								$(this).find("div>button:eq(1)").on("click",btn1Click);
+							});
+						}
+					}
+					var asideClick=function(e){
+						$("body>div").removeClass("menuListShow");
+					};
+					$.tap(".sectionMenu>ul>li",liClick);
+					$.tap(".sectionMenu>ul>li>div>button",stopClick);
+					$.tap(".sectionMenu>ul>li>div>input",stopClick);
+					$.tap(".sectionMenu>ul>li>div",stopClick);
+					$.tap(".menuListShowBtn",menuListShowBtnClick);
+					$.tap("aside",asideClick);
+					$(function(){
+						$.tap(".navMenu>ul>li",asideClick);
+						$.tap(".navMenu>ul>li",function(){
+							$.menu_function_selectList($(this).attr("typeId"),function(str){
+								$(".sectionMenu>ul").html(str);
+								bindLiEvent();
+								menuDataSetList();
+							});
+						})
+						$(".navMenu>ul").html($.menu_navMenu_ulData);
+						$(".sectionMenu>ul").html($.menu_sectionMenu_ulData);
+						bindLiEvent();
+						menuDataSetList();
+					});
+					
+					
+						
+					
+					if(!$.isPC){
+						$(".navMenu>ul>li").on("touchstart",function(){});
+					}
+					
+					
+				}
+			</script>
+			
+		</div>
+		<nav class="navMenu">
+			<h3>魏家凉皮</h3>
+			<p>&emsp;&emsp;凉皮在陕西人的眼里有着举足轻重的地位，并被列为西安非物质文化遗产，是陕西特色小吃的典型代表。在当今市场中，地方特色小吃发展迅速。本文以陕西特色快餐第一品牌——魏家凉皮为研究对象，通过梳理西安华荣魏家餐饮管理有限公司现状，回顾魏家凉皮的发展之路，探索魏家凉皮的成功之路。</p>
+			<ul>
+				<!--<li>全部<span class="glyphicon glyphicon-menu-right"></span></li>
+				<li>凉皮<span class="glyphicon glyphicon-menu-right"></span></li>
+				<li>汉堡<span class="glyphicon glyphicon-menu-right"></span></li>
+				<li>汤类<span class="glyphicon glyphicon-menu-right"></span></li>
+				<li>小吃<span class="glyphicon glyphicon-menu-right"></span></li>-->
+				
+			</ul>
+		</nav>
+		<aside></aside>
+		<script>
+			//$(".loading").hide();
+			var timer=window.setInterval(function(){
+				if(!isInitLoad&&isInitLoadData){
+					clearInterval(timer);
+					$.init();
+				}
+			},100);
+		</script>
+		<!--<a class="loading"></a>-->
+	</body>
+</html>

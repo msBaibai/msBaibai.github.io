@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+		<style>
+			body{
+				background-color: #F7F7F7;
+			}
+			.aaaaa{
+				width: 100px;
+				height: 100px;
+				background-color: #4CAE4C;
+				transition: -webkit-transform 1s;
+				-webkit-transition: -webkit-transform 1s;
+				-webkit-transform: translateX(0px);
+			}
+			#aa{
+				transform: translateX(70%);
+				-webkit-transform: translateX(70%);
+			}
+			.loading{
+				width: 200%;
+				height: 200%;
+				position: fixed;
+				top: -50%;
+				left: -50%;
+				animation: loadingAnimation 0.5s infinite linear;
+				-webkit-animation: loadingAnimation 0.5s infinite linear;
+				
+			}
+			.loading:after{
+				content: " ";
+				position: absolute;
+				width: 50px;
+				height: 50px;
+				left: 50%;
+				top: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				border-radius: 50%;
+				border-left: 2px rgba(0,0,0,0.5) solid;
+				border-right: 2px rgba(0,0,0,0.5) solid;
+				border-top: 2px rgba(0,0,0,0.1) solid;
+				border-bottom: 2px rgba(0,0,0,0.1) solid;
+				box-sizing: border-box;
+				z-index: 1;
+			}
+			.loading:before{
+				content: " ";
+				position: absolute;
+				width: 30px;
+				height: 30px;
+				left: 50%;
+				top: 50%;
+				margin-left: -15px;
+				margin-top: -15px;
+				border-radius: 50%;
+				border: 2px rgba(0,0,0,0.5) solid;
+				box-sizing: border-box;
+				z-index: 2;
+			}
+			@-webkit-keyframes loadingAnimation{
+				0%{
+					transform: rotateZ(0deg);
+					-webkit-transform: rotateZ(0deg);
+				}
+				100%{
+					transform: rotateZ(-360deg);
+					-webkit-transform: rotateZ(-360deg);
+				}
+			}
+			@keyframes loadingAnimation{
+				0%{
+					transform: rotateZ(0deg);
+					-webkit-transform: rotateZ(0deg);
+				}
+				100%{
+					transform: rotateZ(-360deg);
+					-webkit-transform: rotateZ(-360deg);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<a href="#aas">跳转</a>
+		<!--<div class="loading"></div>-->
+		<script>
+			$.tap=function(selector,fn){
+				if(location.hash=="#aas"){
+					$(document).on("click",selector,fn);
+				}else{
+					$(document).on("touchend",selector,fn);
+				}
+			}
+			$.tap("a",function(){
+				alert(1212);
+			});
+		</script>
+	</body>
+</html>
