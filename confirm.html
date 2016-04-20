@@ -231,8 +231,10 @@
 					var total=0;
 					for(var i in menuData){
 						var valJson=menuData[i];
-						total+=valJson.price*valJson.num;
-						sectionConfirmUlList+="<li>"+valJson.name+"<span>&yen;<b>"+valJson.price+"</b>&times;<b>"+valJson.num+"</b></span></li>";
+						if(valJson.num>0){
+							total+=valJson.price*valJson.num;
+							sectionConfirmUlList+="<li>"+valJson.name+"<span>&yen;<b>"+valJson.price+"</b>&times;<b>"+valJson.num+"</b></span></li>";
+						}
 					}
 					sectionConfirmUlList+="<li>总计:<span>&yen;<b>"+total+"</b></span></li>";
 					$.confirmTotal=total;
