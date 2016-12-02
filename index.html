@@ -432,7 +432,7 @@
 				function sendLogin(username,password,parseDataFn){
 					$.ajax({
 						type:"get",
-						url:$.getRootPathAndPort()+"/erp/request",
+						url:"xml/StaffLogin.xml",
 						data:"url="+encodeURIComponent("StaffLogin/"+username+","+password)+"&method=get",
 						//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/StaffLogin/"+username+","+password,
 						dataType:"text",
@@ -462,7 +462,7 @@
 				function sendGetDogName(parseDataFn){
 					$.ajax({
 						type:"get",
-						url:$.getRootPathAndPort()+"/erp/request",
+						url:"xml/KtvInit.xml",
 						data:"url="+encodeURIComponent("KtvInit")+"&method=get",
 						//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/KtvInit",
 						dataType:"text",
