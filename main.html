@@ -492,6 +492,7 @@
 				}
 				$.myScroll=new IScroll(".indexNav");
 				function initLoadRoom(fn){
+					$(".loading").css("display","block");
 					$.when(sendSelectAreaList(),sendSelectRooms()).done(function(str1,str2){
 						var xml1=str1[0];
 						var xml2=str2[0];
@@ -501,6 +502,7 @@
 							html+="<ul>"+parseRoomXmlFormAreaId(xml2,$(this).children("RoomArea_ID").text())+"</ul>";
 						});
 						$(".indexNav>div").html(html);
+						$(".loading").css("display","none");
 						$.data_indexCheckedRoomDivNavHTML=html;
 						$.myScroll.refresh();
 						var jsonOld=null;
