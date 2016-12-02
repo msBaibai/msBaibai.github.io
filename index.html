@@ -364,11 +364,11 @@
 						$.createConfirmBoxOK({"title":"系统提示","content":"账号及密码不能为空"});
 						return;
 					}
-//					window.location.href="#main.html";
-//					return;
+					$(".loading").css("display","block");
 					sendLogin(username,password,function(str){
 						$.data_currentUserId=$(str).text();
 						if(isNaN($.data_currentUserId)||str=="null"||str==null){
+							$(".loading").css("display","none");
 							$.createConfirmBoxOK({"title":"系统提示","content":"账号或密码错误"});
 							return;
 						}
@@ -384,6 +384,7 @@
 						}catch(e){}
 						$.updateState("已登录");
 						$.initOpenPage();
+						$(".loading").css("display","none");
 						window.location.href="#main.html";
 //						sendGetUserInfo($.data_currentUserId,function(str){
 //							alert(str);
