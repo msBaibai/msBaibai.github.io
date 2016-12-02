@@ -1,11 +1,528 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    
-  </head>
-  <body>
-    <script>
-    	location.href="login.html#login.html";
-    </script>
-  </body>
+<html manifest="shop.appcache">
+<!--<html>-->
+	<head>
+		<meta charset="UTF-8">
+		<title>移动ERP</title>
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/icon.png">
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Cache-Control" content="no-cache,no-store" />
+		<meta http-equiv="Expires" content="0" />
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta content="white" name="apple-mobile-web-app-status-bar-style">
+		<meta content="telephone=no" name="format-detection">
+		<meta name="x5-fullscreen" content="true">
+		<meta name="full-screen" content="yes">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/header.css" />
+		<link rel="stylesheet" type="text/css" href="css/list.css" />
+		<link rel="stylesheet" type="text/css" href="css/common.css" />
+		<link rel="stylesheet" type="text/css" href="css/confirmBox.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<link rel="stylesheet" type="text/css" href="css/radio.css"/>
+		<link rel="stylesheet" type="text/css" href="css/switch.css" />
+		<link rel="stylesheet" type="text/css" href="css/roomState.css" />
+		<!--<script>
+			(function(){
+				var CURL=window.location.href;
+				if(CURL.indexOf("_")==-1){
+					if(CURL.indexOf("#")!=-1){
+						var CURLQ=CURL.substring(0,CURL.indexOf("#"))
+						window.location.href=CURLQ+"?_="+(new Date()).getTime();
+					}else{
+						window.location.href=CURL+"?_="+(new Date()).getTime();
+					}
+				}
+			})();
+		</script>-->
+		<script type="text/javascript" src="js/jquery-1.7.2.js" ></script>
+		<script type="text/javascript" src="js/isPC.js" ></script>
+		<script type="text/javascript" src="js/common.js" ></script>
+		<script type="text/javascript" src="js/saveHTML.js" ></script>
+		<script>
+			$.saveHTMLInit();
+		</script>
+		<script type="text/javascript" src="js/openPage.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/createConfirmBox.js" ></script>
+		<!--<script async="true" type="text/javascript" src="js/iscroll.js" ></script>-->
+		<script async="true" defer="defer" type="text/javascript" src="js/iscroll-probe.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/echarts.min.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/qrcode.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/jquery.qrcode.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/jsonConstruction.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/sendSatateAjax.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/webSource.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/jsonCommon.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/fileUpload.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/serviceTimer.js" ></script>
+		<script>
+			$(function(){
+				function clearCookie(){ 
+				    var keys=document.cookie.match(/[^ =;]+(?=\=)/g); 
+				    if(keys){ 
+				        for (var i = keys.length; i--;) 
+				            document.cookie=keys[i]+'=0;expires=' + new Date( 0).toUTCString() 
+			        } 
+				}
+				clearCookie();
+				
+				
+				var appCache = window.applicationCache; 
+				try{
+					appCache.update();
+				}catch(e){}
+//				window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) {
+//			       var str="";
+//			       str+="错误信息："+errorMessage+"\n";
+//			       str+="出错文件："+scriptURI+"\n";
+//			       str+="出错行号："+lineNumber+"\n";
+//			       str+="出错列号："+columnNumber+"\n";
+//			       str+="错误详情："+errorObj+"\n";
+//			       alert(str);
+//				}
+//				appCache.addEventListener("obsolete",function(){
+////					alert(1);
+//			       console.log("Obsolete,status:"+appCache.status);
+//			   },false);
+//			   appCache.addEventListener("cached",function(){
+////			   		alert(2);
+//			       console.log("chache,status:"+appCache.status);
+//			   },false);
+//			   appCache.addEventListener("checking",function(){
+////			   		alert(3);
+//			   		if(appCache.status==window.applicationCache.CHECKING)
+//			   			alert(1);
+//			   },false);
+//			   appCache.addEventListener("downloading",function(){
+////			   		alert(4);
+//			       console.log("downloading,status:"+appCache.status);
+//			   },false);
+//			   appCache.addEventListener("noupdate", function(){
+////			   		alert(5);
+////					console.log("noupdate");
+//					if(noUpdateCount<5){
+//						try{
+//							appCache.update();
+//						}catch(e){}
+//						noUpdateCount++;
+//					}
+//			   }, false);
+//			    appCache.addEventListener('progress', function(){
+////			    	alert(6);
+//			    	console.log("123123");
+//			    }, false);
+				//ApplicationCache 对象支持以下事件：
+				//
+				//当清单已缓存时，将触发 cached 事件。
+				//当检查是否有更新时，将触发 checking 事件。
+				//当下载清单资源时，将触发 downloading 事件。
+				//在下载清单资源期间，将触发 progress 事件。
+				//当出现问题（如 HTML 404 或 410 响应代码）时，将触发 error 事件。当无法下载清单文件时，也会触发该事件。
+				//当缓存有更新的版本可用时，将触发 updateready 事件。
+				//请求更新时将会触发 noupdate 事件，但清单不会发生更改。
+				//当现有的缓存被标记为已过时时，将会触发 obsolete 事件。
+//				alert(1);
+				window.addEventListener('load', function(e){ 
+					appCache.addEventListener('updateready', function(e) {
+//						alert(window.applicationCache.status+"=="+window.applicationCache.UPDATEREADY);
+						if(window.applicationCache.status == 1 || window.applicationCache.status == 4){
+						    appCache.swapCache();
+//						    $.deleteHTML(null,function(name){
+//						    	window.location.reload();
+//						    });
+						    $.deleteHTML();
+						    $.createConfirmBoxOK({"title":"系统提示","content":"已更新至最新版,点击'是'重新加载",click:function(){
+						    	window.location.reload();
+						    }});
+						}
+				    }, false);
+			   	}, false);
+//				$.preLoadPage("index.html");
+//				$.preLoadPage("option.html");
+//				$.preLoadPage("menu.html");
+//				$.preLoadPage("confirm.html");
+//				$.preLoadPage("payment.html");
+//				$.preLoadPage("checkedRoom.html");
+//				$.preLoadPage("packageDetails.html");
+//				$.preLoadPage("remarks.html");
+				$.init();
+			});
+		</script>
+		<style>
+			*{
+				backface-visibility: hidden;
+			}
+			::-webkit-scrollbar{  
+	            width:0px;  
+	        }  
+	        ::-webkit-scrollbar-button {  
+	        }  
+	        ::-webkit-scrollbar-track{  
+	            background-color:rgba(225,225,225,0);  
+	        }  
+	        ::-webkit-scrollbar-track-piece{  
+	            background-color:rgba(225,225,225,0); 
+	            -webkit-border-radius:4px;  
+	        }  
+	        ::-webkit-scrollbar-thumb{  
+	            background-color:rgba(225,225,225,0); 
+	            border:solid 1px #C0C0C0;  
+	            border-radius:4px;  
+	            //background: linear-gradient(to right,#E3E3E3 0,#F5FFFA 100%);
+	        }  
+	        ::-webkit-scrollbar-corner {  
+	            //background-color: #E0EEEE;  
+	            background-color:rgba(225,225,225,0); 
+	        }  
+	        ::-webkit-resizer {  
+	            /*background-image: url(/public/img/resizer-inactive.png);*/  
+	           background-repeat: no-repeat;  
+	           background-position: bottom right;  
+	        }  
+	        ::-webkit-scrollbar-thumb:hover{  
+	            background-color:rgba(225,225,225,0);  
+	        }
+			body{
+				margin: 0;
+				padding: 0;
+				font-size: 0px;
+				font-family: 'Helvetica Neue',Helvetica,sans-serif;
+				-webkit-user-select: none;
+				overflow: hidden;
+				background-color: rgba(185, 185, 185, 0.19);
+			}
+			body>div{
+				transform: scale(1,1);
+				-webkit-transform: scale(1,1);
+			}
+			ul{
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			a{
+				cursor: pointer;
+			}
+		</style>
+		<style id="ifWxStyle">
+			.menuListShow{
+				-webkit-filter: blur(3px);
+			}
+		</style>
+		<style id="androidTransitionStyle">
+			nav.menuNavMenu{
+				transition:-webkit-transform 0.4s;
+				-webkit-transition:-webkit-transform 0.4s;
+			}
+			nav.navMenu{
+				transition:-webkit-transform 0.4s;
+				-webkit-transition:-webkit-transform 0.4s;
+			}
+		</style>
+		<script>
+			(function($){
+				function isWeiXin(){
+				    var ua = window.navigator.userAgent.toLowerCase();
+				    if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+				        return true;
+				    }else{
+				        return false;
+				    }
+				}
+				$.isWeiXin=isWeiXin();
+				if($.isWeiXin&&$.isAndroid){
+					$("#ifWxStyle").remove();
+				}
+				if(!$.isAndroid)
+					$("#androidTransitionStyle").remove();
+			})($);
+		</script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.loginFormDiv{
+					width: 100%;
+					height: calc(100% - 67px);
+				}
+				.loginFormDiv>ul{
+					margin-top: 20px;
+					height: auto;
+				}
+				.loginFormDiv>ul>li{
+					font-size: 16px;
+				}
+				.loginFormDiv>ul>li:last-child{
+					margin-top: 10px;
+				}
+				.loginFormDiv>ul>li>span{
+					width: 60%;
+					height: 100%;
+					display: block;
+					position: absolute;
+					top: 0px;
+					right: 0px;
+					font-size: 16px;
+					background-color: #FFFFFF;
+					line-height: 36px;
+				}
+				.loginFormDiv>ul>li>span>input.switch{
+					position: absolute;
+					right: 65px;
+					top: 37px;
+				}
+				.loginFormDiv>button{
+					width: 94%;
+				    height: 40px;
+				    background-color: #3697F7;
+				    box-shadow: 0px 0px 3px #333333;
+				    border: 1px #3697F7 solid;
+				    box-shadow: inset 0px 0px 3px #999999;
+				    display: block;
+				    margin: 0 auto;
+				    margin-top: 35px;
+				    outline: none;
+				    color: #FFFFFF;
+				    font-size: 17px;
+				    line-height: 40px;
+				    font-weight: 600;
+				    transition: background-color 0.25s;
+				    -webkit-transition: background-color 0.25s;
+				    border-radius: 3px;
+				}
+				.loginFormDiv>button:active{
+					background-color: #2A5CB1;
+				}
+				.userName.listInput,.passWord.listInput{
+					height: 17px;
+				    line-height: 22px;
+				    box-sizing: content-box;
+				    padding-top: 15px;
+				    padding-bottom: 15px;
+				}
+			</style>
+			<header class="header">
+				<h4>移动管理系统</h4>
+				<a style="visibility: hidden;"></a>
+				<a class="help"><span class="glyphicon glyphicon-info-sign"></span></a>
+			</header>
+			<div class="loginFormDiv">
+				<ul class="list">
+					<li>
+						账号
+						<input class="userName listInput" type="text" placeholder="请输入账号" />
+					</li>
+					<li>
+						密码
+						<input class="passWord listInput" type="password" placeholder="请输入密码"/>
+					</li>
+					<li>
+						自动登录
+						<span>
+							<input type="checkbox" class="switch"/>
+						</span>
+					</li>
+				</ul>
+				<button>登录</button>
+			</div>
+		</div>
+		<script>
+			$.init=function(){
+				if($("foot").length==2){
+					$("foot:eq(1)").remove();
+				}
+				$.ajaxSetup({cache:false});
+				$(".userName").val(localStorage.getItem("userName"));
+				$(".passWord").val(localStorage.getItem("passWord"));
+				if(!!localStorage.getItem("userName")){
+					$(".loginFormDiv>ul>li>span>input.switch")[0].checked=true;
+				}
+				/*刷新*/
+//				var dq=localStorage.getItem("dq");
+//				if(!!dq){
+//					$.data_currentUserId=localStorage.getItem("dq_user");
+//					window.location.href="#"+dq;
+//				}
+//				window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) {
+//			       var str="";
+//			       str+="错误信息："+errorMessage+"\n";
+//			       str+="出错文件："+scriptURI+"\n";
+//			       str+="出错行号："+lineNumber+"\n";
+//			       str+="出错列号："+columnNumber+"\n";
+//			       str+="错误详情："+errorObj+"\n";
+//			       alert(str);
+//				}
+				
+				$.tap(".loginFormDiv>button",function(){
+					var username=$(".userName").val();
+					var password=$(".passWord").val();
+					if(!username||!password){
+						$.createConfirmBoxOK({"title":"系统提示","content":"账号及密码不能为空"});
+						return;
+					}
+//					window.location.href="#main.html";
+//					return;
+					sendLogin(username,password,function(str){
+						$.data_currentUserId=$(str).text();
+						if(isNaN($.data_currentUserId)||str=="null"||str==null){
+							$.createConfirmBoxOK({"title":"系统提示","content":"账号或密码错误"});
+							return;
+						}
+						if(!!$(".loginFormDiv>ul>li>span>input.switch")[0].checked){
+							localStorage.setItem("userName",username);
+							localStorage.setItem("passWord",password);
+						}else{
+							localStorage.removeItem("userName");
+							localStorage.removeItem("passWord");
+						}
+						try{
+							window.plus.login(username,password);
+						}catch(e){}
+						$.updateState("已登录");
+						$.initOpenPage();
+						window.location.href="#main.html";
+//						sendGetUserInfo($.data_currentUserId,function(str){
+//							alert(str);
+//						});
+					});
+				});
+				$.tap(".help",function(){
+					try{
+						window.plus.helpUse();
+					}catch(e){
+						$.altAuto("该环境不支持");
+					}
+				});
+				$(window).off("hashchange").on("hashchange",function(){
+					if(window.location.hash!="#login.html"){
+						window.location.hash="#login.html";
+						$.createConfirmBox({"title":"系统提示","content":"是否确认退出?","click":function(){
+							try{
+								window.plus.finish();
+							}catch(e){
+								$.altAuto("退出");
+							}
+						}});
+					}
+				});
+				if(!$.data_ktvId){
+					sendGetDogName(function(str){
+						$.data_ktvId=$(str).find("DocumentElement>KtvInit>Ktvid").text();
+						$.data_dogName=$(str).find("DocumentElement>KtvInit>DogName").text();
+						try{
+							window.plus.saveValueWithKey("ktvId",$.data_ktvId);
+						}catch(e){}
+					});	
+				}
+				function sendLogin(username,password,parseDataFn){
+					$.ajax({
+						type:"get",
+						url:"xml/StaffLogin.xml",
+						dataType:"text",
+						success:function(str){
+							parseDataFn(str);
+						},
+						error:function(){
+							$.alt("登录失败!");
+						}
+					});
+				}
+//				function sendGetUserInfo(id,parseDataFn){
+//					$.ajax({
+//						type:"get",
+//						url:$.getRootPathAndPort()+"/erp/request",
+//						data:"url="+encodeURIComponent("GetStaffInfo/"+id)+"&method=get",
+//						//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetStaffInfo/"+id,
+//						dataType:"text",
+//						success:function(str){
+//							parseDataFn(str);
+//						},
+//						error:function(){
+//							$.alt("操作失败!");
+//						}
+//					});
+//				}
+				function sendGetDogName(parseDataFn){
+					$.ajax({
+						type:"get",
+						url:"xml/KtvInit.xml",
+						dataType:"text",
+						success:function(str){
+							parseDataFn(str);
+						},
+						error:function(xhr){
+							$.alt("获取加密狗失败!");
+						}
+					});
+				}
+				window.sendState=function(stateName,describe){
+					$.updateState(stateName,describe);
+				}
+			}
+		</script>
+	</body>
+	<foot>
+		<div class="confirmBox">
+			<div>
+				<span></span>
+				<span></span>
+				<div>
+					<span>是</span>
+					<span>否</span>
+				</div>
+			</div>
+		</div>
+		<div class="confirmBoxInput">
+			<div>
+				<span></span>
+				<span></span>
+				<input type="text" placeholder="" />
+				<div>
+					<span>是</span>
+					<span>否</span>
+				</div>
+			</div>
+		</div>
+		<div class="confirmBoxInputNumber">
+			<div>
+				<span></span>
+				<span></span>
+				<input type="number" readonly="readonly" placeholder="" />
+				<ul>
+					<li>1</li>
+					<li>2</li>
+					<li>3</li>
+					<li>4</li>
+					<li>5</li>
+					<li>6</li>
+					<li>7</li>
+					<li>8</li>
+					<li>9</li>
+					<li class="confirmBoxInputNumberOK"><span class="glyphicon glyphicon-ok"></span></li>
+					<li>0</li>
+					<li class="confirmBoxInputNumberBackspace"><span class="glyphicon glyphicon-arrow-left"></span></li>
+				</ul>
+			</div>
+		</div>
+		<div class="confirmBoxOK">
+			<div>
+				<span></span>
+				<span></span>
+				<div>
+					<span>是</span>
+				</div>
+			</div>
+		</div>
+		<div class="loading" style="display: none;"></div>
+		<div class="tip" style="display: none;"></div>
+		<div class="bottomList">
+			<ul>
+				<li>取消</li>
+			</ul>
+		</div>
+	</foot>
 </html>
