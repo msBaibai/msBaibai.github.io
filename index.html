@@ -398,18 +398,28 @@
 						$.altAuto("该环境不支持");
 					}
 				});
-				$(window).off("hashchange").on("hashchange",function(){
-					if(window.location.hash!="#index.html"){
-						window.location.hash="#index.html";
-						$.createConfirmBox({"title":"系统提示","content":"是否确认退出?","click":function(){
-							try{
-								window.plus.finish();
-							}catch(e){
-								$.altAuto("退出");
-							}
-						}});
-					}
-				});
+				
+				function toBKLogin(){
+					window.setTimeout(function(){
+						var hash=window.location.hash;
+						$(window).off("hashchange").on("hashchange",function(){
+							window.location.hash=hash;
+							window.setTimeout(function(){
+								$.createConfirmBox({"title":"系统提示","content":"是否确认退出?","click":function(){
+									try{
+										window.plus.finish();
+									}catch(e){
+										$.altAuto("退出");
+									}
+								},"cancel":function(){
+									toBKLogin();
+								}});
+							},100);
+						});
+					},100);
+				}
+				toBKLogin();
+				
 				if(!$.data_ktvId){
 					sendGetDogName(function(str){
 						$.data_ktvId=$(str).find("DocumentElement>KtvInit>Ktvid").text();
@@ -422,7 +432,9 @@
 				function sendLogin(username,password,parseDataFn){
 					$.ajax({
 						type:"get",
-						url:"xml/StaffLogin.xml",
+						url:$.getRootPathAndPort()+"/erp/request",
+						data:"url="+encodeURIComponent("StaffLogin/"+username+","+password)+"&method=get",
+						//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/StaffLogin/"+username+","+password,
 						dataType:"text",
 						success:function(str){
 							parseDataFn(str);
@@ -450,7 +462,9 @@
 				function sendGetDogName(parseDataFn){
 					$.ajax({
 						type:"get",
-						url:"xml/KtvInit.xml",
+						url:$.getRootPathAndPort()+"/erp/request",
+						data:"url="+encodeURIComponent("KtvInit")+"&method=get",
+						//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/KtvInit",
 						dataType:"text",
 						success:function(str){
 							parseDataFn(str);
