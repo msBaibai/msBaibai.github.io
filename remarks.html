@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>在线点餐</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.sectionRemarks{
+					margin-top: 3px;
+				}
+				.sectionRemarks>ul>li>input{
+					position: absolute;
+				    right: 60px;
+				    top: 37px;
+				}
+				
+			</style>
+			<header class="header">
+				<h4>选择口味</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+			</header>
+			<section class="sectionRemarks">
+				<label class="titleLabel">请选择口味:</label>
+				<ul class="list">
+					<li>免葱<input class="switch" type="checkbox"/></li>
+					<li>免香菜<input class="switch" type="checkbox"/></li>
+					<li>免豆芽<input class="switch" type="checkbox"/></li>
+					<li>免辣椒<input class="switch" type="checkbox"/></li>
+					<li>免芝麻酱<input class="switch" type="checkbox"/></li>
+				</ul>
+			</section>
+			<script>
+				$.init=function(){
+					var liActiveClick=function(){
+						var bol=$(this).children("input")[0].checked;
+						$(this).children("input")[0].checked=!bol;
+					}
+					var stopClick=function(e){
+						e.stopPropagation();
+					}
+					$.tap(".sectionRemarks>ul>li",liActiveClick);
+					$.tap(".sectionRemarks>ul>li>input",stopClick);
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>

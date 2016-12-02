@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>在线点餐</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.sectionOption{
+					margin-top: 3px;
+				}
+				.sectionOption>label{
+					width: auto;
+					display: block;
+					font-size: 14px;
+					margin-left: 13px;
+					color: #717171;
+					line-height: 38px;
+				}
+				.sectionOption>ul>li>b{
+					position: absolute;
+					right: 32px;
+					color: #8A8989;
+					letter-spacing: 3px;
+				}
+				.sectionOption>ul>li>span{
+					position: absolute;
+					right: 12px;
+					color: #717171;
+					line-height: 46px;
+				}
+				.sectionOption>ul>li:active{
+					background-color: #EEEEEE;
+				}
+				.sectionOption>ul>li:nth-of-type(1){
+					margin-top: 15px;
+					margin-bottom: 30px;
+				}
+				.sectionOption>ul>li:nth-of-type(3){
+					margin-bottom: 30px;
+				}
+				.outLogin{
+			        width: 100%;
+				    height: 42px;
+				    position: relative;
+			        border-top: 1px rgba(138, 137, 137, 0.2) solid;
+				    border-bottom: 1px rgba(138, 137, 137, 0.2) solid;
+				    border-right: none;
+				    border-left: none;
+				    font-size: 15px;
+				    line-height: 42px;
+				    padding: 0;
+				    background-color: #ffffff;
+				    transition: background-color 0.25s;
+				    -webkit-transition: background-color 0.25s;
+				    cursor: pointer;
+				    backface-visibility: hidden;
+				    -webkit-transform: translate3d(0,0,0);
+				    transform: translate3d(0,0,0);
+				    outline: none;
+				    margin-top: 30px;
+				    color: #EF4C4C;
+				}
+				.outLogin:active{
+					background-color: #EEEEEE;
+				}
+			</style>
+			<header class="header">
+				<h4>设置</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+			</header>
+			<section class="sectionOption">
+				<ul class="list">
+					<li class="updatePassword">修改密码<span class="glyphicon glyphicon-menu-right"></span></li>
+					<li class="serviceIP">服务器IP<span class="glyphicon glyphicon-menu-right"></span></li>
+					<li class="clearCache">清除缓存<span class="glyphicon glyphicon-menu-right"></span></li>
+					<li class="about">关于<span class="glyphicon glyphicon-menu-right"></span></li>
+				</ul>
+				<button class="outLogin">退出登录</button>
+			</section>
+			
+			<script>
+				$.init=function(){
+					$(".sectionOption").off("touchstart").on("touchstart",function(){
+						event.preventDefault();
+					});
+					$.tap(".clearCache",function(){
+						$.createConfirmBox({"title":"清除缓存","content":"是否确认清除？","click":function(){
+							localStorage.clear();
+							$.deleteHTML();
+							$.altAuto("缓存已清除!");
+//							$.preLoadPage("index.html");
+//							$.preLoadPage("option.html");
+//							$.preLoadPage("menu.html");
+//							$.preLoadPage("confirm.html");
+//							$.preLoadPage("payment.html");
+//							$.preLoadPage("checkedRoom.html");
+//							$.preLoadPage("packageDetails.html");
+//							$.preLoadPage("remarks.html");
+						},"cancel":function(){
+							
+						}});
+					});
+					$.tap(".updatePassword",function(){
+						var password="";
+						$.createConfirmBoxInput({"title":"修改密码","content":"请输入新密码","placeholder":"新密码","click":function(){
+							password=$(".confirmBoxInput>div>input").val();
+							if(!password){
+								$.createConfirmBoxOK({"title":"系统提示","content":"新密码不能为空"});
+								return;
+							}
+							$.createConfirmBoxInput({"title":"修改密码","content":"请再次输入密码","placeholder":"确认密码","click":function(){
+								if(password==$(".confirmBoxInput>div>input").val()){
+									sendChangePasswordManager(password,function(){
+										$.createConfirmBoxOK({"title":"系统提示","content":"修改成功！"});
+									});
+								}else{
+									$.createConfirmBoxOK({"title":"系统提示","content":"两次密码不一致"});
+								}
+							}});
+						}});
+					});
+					$.tap(".serviceIP",function(){
+						$.createConfirmBoxInput({"title":"设置IP","content":"请输入服务器IP","placeholder":"IP地址","click":function(){
+							var ip=$(".confirmBoxInput>div>input").val();
+							if(ip=="9"){
+								$.getCount(function(count){
+									$.altAuto("缓存数量:"+count);
+								});
+							}
+						}});
+					});
+					$.tap(".about",function(){
+						$.createConfirmBoxOK({"title":"关于","content":"&emsp;&emsp;北京雷石天地电子技术有限公司是一家高新企业，成立于1996年，创始人王川，总经理马杰，副总经理张浩。2015年雷石与视点PC平台业务正式宣布合并，双方携手在VOD全品类平台中进一步整合行业内资源，合并后的新雷石占VOD市场份额超过60%，是全球最大的VOD供应商和互联网服务平台。"});
+					});
+					$.tap(".outLogin",function(){
+						$.createConfirmBox({"title":"注销","content":"是否确认退出登录？","click":function(){
+							try{
+								$.updateState("已登出");
+								window.plus.logout();
+							}catch(e){
+								$.altAuto("登出");
+							}
+							window.location.hash="#login.html";
+						}});
+					});
+					function sendChangePasswordManager(password,parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/ChangePasswordManager.xml",
+							data:"url="+encodeURIComponent("ChangePasswordManager/"+$.data_currentUserId+","+password)+"&method=get",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>

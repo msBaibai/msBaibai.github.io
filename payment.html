@@ -10,38 +10,10 @@
 	<body>
 		<div>
 			<style>
-				body{
-					background-color: rgba(185, 185, 185, 0.19);
-				}
 				.sectionPayment{
+					height: calc( 100% - 47px );
 					margin-top: 3px;
-				}
-				.sectionPayment>label{
-					width: auto;
-					display: block;
-					font-size: 14px;
-					margin-left: 13px;
-					color: #717171;
-					line-height: 38px;
-				}
-				.sectionPayment>ul:nth-of-type(1){
-					margin: 0;
-					padding: 0;
-					width: 100%;
-					overflow-x: hidden;
-					list-style: none;
-					border-top: 1px rgba(138, 137, 137, 0.14) solid;
-				}
-				.sectionPayment>ul:nth-of-type(1)>li{
-					width: 100%;
-					height: 42px;
-					margin-bottom: 1px;
-					position: relative;
-					background-color: #FFFFFF;
-					border-bottom: 1px rgba(138, 137, 137, 0.14) solid;
-					font-size: 15px;
-					line-height: 42px;
-					padding-left: 4%;
+					overflow-y: auto;
 				}
 				.sectionPayment>ul:nth-of-type(1)>li>span{
 					position: absolute;
@@ -49,67 +21,17 @@
 					color: #8A8989;
 					letter-spacing: 1px;
 				}
-				.sectionPayment>ul:nth-of-type(2){
-					width: 90%;
-					padding: 0;
-					list-style: none;
-					background-color: #FFFFFF;
-					margin: 0 auto;
-					border-top: 1px rgba(136, 136, 136, 0.21) solid;
-					border-left: 1px rgba(136, 136, 136, 0.21) solid;
-					border-right: 1px rgba(136, 136, 136, 0.21) solid;
-					border-radius: 10px;
-					cursor: pointer;
-				}
-				.sectionPayment>ul:nth-of-type(2)>li{
-					width: 100%;
-					font-size: 16px;
-					line-height: 38px;
-					box-sizing: border-box;
-					border-bottom: 1px rgba(136, 136, 136, 0.21) solid;
-					padding-left: 15px;
-					position: relative;
-				}
-				.sectionPayment>ul:nth-of-type(2)>li:last-child{
-					border-bottom-left-radius: 10px;
-					border-bottom-right-radius: 10px;
-				}
-				.sectionPayment>ul:nth-of-type(2)>li>div{
-					width: 24px;
-					height: 24px;
-					border: 1px rgba(156, 156, 156, 0.41) solid;
-					position: absolute;
-					right: 20px;
-					border-radius: 50%;
-					top: 7px;
-					padding: 5px;
-				}
-				.sectionPayment>ul:nth-of-type(2)>li>div:after{
-					content: " ";
-					position: absolute;
-					left: 5px;
-					top: 5px;
-					width: 12px;
-					height: 12px;
-					background-color: #639BCE;
-					border-radius: 50%;
-					display: none;
-				}
-				.sectionPayment>ul:nth-of-type(2)>li.active>div{
-					border-color: #639BCE;
-				}
-				.sectionPayment>ul:nth-of-type(2)>li.active>div:after{
-					display:block;
-				}
+				
 				.sectionPayment>button{
 					width: 80%;
 					height: 47px;
 					background-color: #4CAE4C;
 					box-shadow: 0px 0px 3px #333333;
-					border: 1px #4CAE4C solid;
+				    border: none;
 					display: block;
 					margin: 0 auto;
 					margin-top: 35px;
+					margin-bottom: 35px;
 					outline: none;
 					color: #FFFFFF;
 					font-size: 20px;
@@ -121,41 +43,302 @@
 				.sectionPayment>button:active{
 					background-color: #3F8C3F;
 				}
+				.sectionPayment>ul:nth-of-type(2)>li>input{
+					position: absolute;
+				    display: block;
+				    right: 38px;
+				    top: 35px;
+				}
+				.loadBtn::after{
+					content: "请先选择支付方式";
+				}
 			</style>
 			<header class="header">
-				<h4>订单支付</h4>
-				<a href="#confirm.html"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<h4>下单</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
 				<!--<a toHref="menu.html" class="toHref"><span class="glyphicon glyphicon-ok"></span></a>-->
 			</header>
 			<section class="sectionPayment">
-				<label>请确认您订单信息:</label>
-				<ul>
-					<li>订单编号：<span>2016041478359011</span></li>
-					<li>支付商户：<span>西安华荣魏家餐饮有限公司</span></li>
+				<label class="titleLabel">请确认您订单信息:</label>
+				<ul class="list">
+					<li>点单人员：<span>加载中...</span></li>
+					<li>包厢名称：<span>加载中...</span></li>
 					<li>下单时间：<span>2016-04-15</span></li>
-					<li>支付金额：<span></span></li>
+					<li>支付金额：<span>计算中...</span></li>
 				</ul>
-				<label>请选择支付方式:</label>
-				<ul>
-					<li>支付宝<div></div></li>
-					<li>微信支付<div></div></li>
-					<li>银联支付<div></div></li>
+				<label class="titleLabel">请选择支付方式:</label>
+				<ul class="listRadius">
+					<li typeId="100">支付宝<input class="radio" name="payType" type="radio" /> </li>
+					<li typeId="1000">微信支付<input class="radio" name="payType" type="radio" /></li>
+					<!--<li typeId="6">信用卡<input class="radio" name="payType" type="radio" /></li>-->
+					<li typeId="1">现结<input class="radio" name="payType" type="radio" /></li>
 				</ul>
-				<button>确认支付</button>
+				<button class="loadBtn"></button>
 			</section>
 			<script>
 				$.init=function(){
+					var hrefArr=$.getHrefArr();
+					var hrefTitle=$.getHrefTitle();
 					var liActiveClick=function(){
-						$(".sectionPayment>ul>li.active").removeClass("active");
-						$(this).addClass("active");
+						$(this).children("input")[0].checked=true;
+						var type=$(this).attr("typeId");
+						if(type=="1"||type=="6"){
+							$(".sectionPayment>button").removeClass("loadBtn").html("确认收款");
+						}else{
+							$(".sectionPayment>button").removeClass("loadBtn").html("生成收款二维码");
+						}
 					}
-					$.tap(".sectionPayment>ul>li",liActiveClick);
+					$.tap(".sectionPayment>ul.listRadius>li",liActiveClick);
+					sendInsertOLBusiness(function(str){
+						$.data_OLBusiness=$(str).text();
+						//$(".sectionPayment>ul:eq(0)>li:eq(0)>span").html($.data_OLBusiness);
+					});
+					sendCalculateDrinks($.dataConfirmCheckedRoomIP,0,$.createFoodListString(),function(str){
+						$.data_ftRecipe_Fee=$(str).find("DocumentElement>RecipeFeeInfo>ftRecipe_Fee").text();
+						$.updateState("点单","&yen;"+$.data_ftRecipe_Fee);
+						$(".sectionPayment>ul:eq(0)>li:eq(3)>span").html("&yen;"+$.data_ftRecipe_Fee);
+					});
+					if(!$.data_ktvId){
+						sendGetDogName(function(str){
+							$.data_ktvId=$(str).find("DocumentElement>KtvInit>Ktvid").text();
+							$.data_dogName=$(str).find("DocumentElement>KtvInit>DogName").text();
+						});
+					}
+					
+					$(".sectionPayment>ul:eq(0)>li:eq(0)>span").html($.data_currentUserName);
 					var date=new Date();
 					var time=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
-					$(".sectionPayment>ul:eq(0)>li:eq(0)>span").html("2016"+new Date().getTime());
-					$(".sectionPayment>ul:eq(0)>li:eq(1)>span").html("西安华荣魏家餐饮有限公司");
+					//$(".sectionPayment>ul:eq(0)>li:eq(0)>span").html("2016"+new Date().getTime());
+					$(".sectionPayment>ul:eq(0)>li:eq(1)>span").html($.dataConfirmCheckedRoomName);
 					$(".sectionPayment>ul:eq(0)>li:eq(2)>span").html(time);
-					$(".sectionPayment>ul:eq(0)>li:eq(3)>span").html("&yen;"+$.confirmTotal);
+					//$(".sectionPayment>ul:eq(0)>li:eq(3)>span").html("&yen;"+$.confirmTotal);
+					$.tap(".sectionPayment>button",function(){
+						$.payType=$(".listRadius>li>input:checked").parent().attr("typeId");
+						if($.payType=="100"){
+							$.createConfirmBoxOK({"title":"系统提示","content":"支付宝支付暂未开通"});
+//							sendPay("AliPay","fastpay",$.data_ktvId,time,"ALI",$.dataConfirmCheckedRoomId,"","1122334","","SWEEPCODE",returnALIpay3CreateData(),$.data_OLBusiness,date.getTime(),"",function(str){
+//								str=$.parseJSON(str);
+//								$.data_codeUrl=str.qr_code;
+//								$.data_outTradeNo=str.order;
+//								if(!!$.data_codeUrl)
+//									window.location.href="#showQRcode.html";
+//								else
+//									$.createConfirmBoxOK({"title":"系统提示","content":str.sub_msg});
+//							});
+						}else if($.payType=="1000")
+							sendPay("WxPay","fastpay",$.data_ktvId,time,"WX",$.dataConfirmCheckedRoomId,"","1122334","","SWEEPCODE",returnWXpay3CreateData(),$.data_OLBusiness,date.getTime(),"",function(str){
+								str=$.parseJSON(str);
+								$.data_codeUrl=str.code_url;
+								$.data_outTradeNo=str.order;
+								if(!!$.data_codeUrl)
+									window.location.href="#showQRcode.html";
+								else
+									$.createConfirmBoxOK({"title":"系统提示","content":str.sub_msg});
+							});
+						else if($.payType=="1")
+							$.createConfirmBox({"title":"温馨提示","content":"是否确认收到&yen;"+$.data_ftRecipe_Fee+"？","click":function(){
+								sendPlaceAnOrder($.dataConfirmCheckedRoomId,$.data_currentUserId,100,100,$.payType,0,$.createFoodListString(),function(str){
+									sendInsertStaffsPerformance(getSendInsertStaffsPerformanceData(),function(json){});
+									$.clearHrefArrToMain();
+									$.clearMenuData();
+									$.createConfirmBoxOK({"title":"系统提示","content":$(str).html(),"click":function(){
+										window.location.href="#main.html";
+									},"toBackEvent":function(){
+										window.location.href="#main.html";
+									}});
+								});
+							}});
+//						else if($.payType=="6"){
+//							$.createConfirmBox({"title":"温馨提示","content":"请确认已刷信用卡: "+$.data_ftRecipe_Fee+"元","click":function(){
+//								sendPlaceAnOrder($.dataConfirmCheckedRoomId,$.data_currentUserId,100,100,$.payType,0,$.createFoodListString(),function(str){
+//									sendInsertStaffsPerformance(getSendInsertStaffsPerformanceData(),function(json){});
+//									$.createConfirmBoxOK({"title":"系统提示","content":$(str).html(),"click":function(){
+//										sessionStorage.setItem("menuData","{}");
+//										sessionStorage.setItem("menuDataPackageDetails","{}");
+//										window.location.href="#main.html";
+//									}});
+//								});
+//							}});
+//						}
+						
+					});
+					
+					function createDataString(name,obj){
+						var str="";
+						for(var i in obj){
+							if(obj.hasOwnProperty(i)){
+								str+=name+"."+i+"="+obj[i]+"&";
+							}
+						}
+						str=str.substring(0,str.length-1);
+						return str;
+					}
+					function getSendInsertStaffsPerformanceData(){
+						var staffsPerformance={};
+						staffsPerformance.staffsPerformance_StaffsID=$.data_currentUserId;
+						staffsPerformance.staffsPerformance_StaffsName=$.data_currentUserName;
+						staffsPerformance.staffsPerformance_OutTradeNo=$.data_outTradeNo;
+						staffsPerformance.staffsPerformance_Performance=$.data_ftRecipe_Fee;
+						var date=new Date();
+						var time=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+						staffsPerformance.staffsPerformance_Time=time;
+						staffsPerformance.staffsPerformance_PayType=$.payType;
+						return staffsPerformance;
+					}
+					function sendInsertStaffsPerformance(staffsPerformance,parseDataFn){
+						$.ajax({
+							type:"get",
+							//url:$.getRootPathAndPort()+"/erp/staffsPerformance!insert?staffsPerformance.staffsPerformance_StaffsID="+staffsPerformance.staffsPerformance_StaffsID+"&staffsPerformance.staffsPerformance_StaffsName="+staffsPerformance.staffsPerformance_StaffsName+"&staffsPerformance.staffsPerformance_OutTradeNo="+staffsPerformance.staffsPerformance_OutTradeNo+"&staffsPerformance.staffsPerformance_Performance="+staffsPerformance.staffsPerformance_Performance+"&staffsPerformance.staffsPerformance_Time="+staffsPerformance.staffsPerformance_Time+"&staffsPerformance.staffsPerformance_PayType="+staffsPerformance.staffsPerformance_PayType,
+							url:"json/staffsPerformance-insert.json",
+							dataType:"text",
+							data:createDataString("staffsPerformance",staffsPerformance),
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					
+					function returnWXpay3CreateData(){
+						return JSON.stringify({
+							"out_trade_no":"0",
+							"paraBody": "在线点餐",
+						    "paraAttach": null,
+						    //"paraTotalFee": parseInt($.data_ftRecipe_Fee)*100,
+						    "paraTotalFee": 1,
+						    "paraBillCreateIp": null,
+						    "paraAuthCode": null,
+						    "paraAppId":null,
+						    "paraMchId":null,
+						    "paraOpenId":null,
+						    "paraSubMchId":null,
+						    "paraDeviceInfo":null,
+						    "paraTimeStart":null,
+						    "paraTimeExpire":null,
+						    "paraGoodsTag":null
+						});
+					}
+					function returnALIpay3CreateData(){
+						return JSON.stringify({
+							"total_amount":"",
+							"paraBody": "在线点餐",
+						    "paraAttach": null,
+						    //"paraTotalFee": parseInt($.data_ftRecipe_Fee)*100,
+						    "paraTotalFee": 1,
+						    "paraBillCreateIp": null,
+						    "paraAuthCode": null,
+						    "paraOpenId": null,
+						    "paraAppId": null,
+						    "paraMchId": null,
+						    "paraSubMchId": null,
+						    "paraCertFileName": null,
+						    "paraPassword": null,
+						    "paraDeviceInfo":null,
+						    "paraTimeStart":null,
+						    "paraTimeExpire":null,
+						    "paraGoodsTag":null
+						});
+					}
+					function sendCalculateDrinks(ip,memberCard,foodListString,parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/GetRecipeFeeInfo.xml",
+							data:"url="+encodeURIComponent("GetRecipeFeeInfo/"+ip+","+memberCard)+"&method=post&&postData="+encodeURIComponent(foodListString),
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetRecipeFeeInfo/"+ip+","+memberCard,
+							dataType:"text",
+							//data:foodListString,
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendPlaceAnOrder(roomId,staffId,zk1,zk2,payType,tradeD,foodListString,parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/OrderRecipesMobileERP.xml",
+							data:"url="+encodeURIComponent("OrderRecipesMobileERP/"+roomId+","+staffId+","+zk1+","+zk2+","+payType+","+tradeD)+"&method=post&postData="+encodeURIComponent(foodListString),
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/OrderRecipesMobileERP/"+roomId+","+staffId+","+zk1+","+zk2+","+payType+","+tradeD,
+							dataType:"text",
+							//data:foodListString,
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendPay(urlName,op,ktvid,date,paytype,mark,other,product,coupon_send_id,action,data,erpid,time,sign,parseDataFn){
+						$.wxAndAli=paytype;
+						var cs="op="+op+"&ktvid="+79396+"&date="+date+"&paytype="+paytype+"&mark="+mark+"&other="+other+"&product="+product+"&coupon_send_id="+coupon_send_id+"&action="+action+"&erpid="+erpid+"&time="+time+"&sign="+sign+"&coupon_value=0";
+						//var url="https://pay.ktvsky.com/wx?"+cs;
+						//&data="+data
+						//url=encodeURIComponent(url);
+						$.ajax({
+							type:"get",
+							url:"json/WxPay.json",
+							//url:url,
+							//url:"http://localhost/Req/WxPay?url="+url,
+							dataType:"text",
+							data:"data="+data,
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendGetorder(op,ktvid,fee,date,paytype,mark,other,product,erpid,time,sign){
+						$.ajax({
+							type:"get",
+							url:$.getRootPathAndPort()+"/erp/request",
+							data:"url="+encodeURIComponent("WechatPreOrder/"+olid+","+subject+","+refund_amount+","+roomId+","+payterminal)+"&method=post",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/WechatPreOrder/"+olid+","+subject+","+refund_amount+","+roomId+","+payterminal,
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendGetDogName(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:$.getRootPathAndPort()+"/erp/request",
+							data:"url="+encodeURIComponent("KtvInit")+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/KtvInit",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendInsertOLBusiness(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/InsertOLBusiness.xml",
+							data:"url="+encodeURIComponent("InsertOLBusiness/"+5+","+0.1+","+2+","+$.dataConfirmCheckedRoomId)+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/InsertOLBusiness/"+5+","+0.1+","+2+","+$.dataConfirmCheckedRoomId,
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
 				}
 			</script>
 		</div>

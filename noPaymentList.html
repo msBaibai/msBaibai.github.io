@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>在线点餐</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.sectionNoPaymentList{
+					margin-top: 3px;
+					height: calc(100% - 90px);
+					position: relative;
+					overflow: hidden;
+				}
+				.sectionNoPaymentList>label{
+				    background-color: #ffffff;
+				    top: -2px;
+				    z-index: 2;
+				}
+				.sectionNoPaymentList>div{
+					width: 100%;
+					position: absolute;
+				}
+				.sectionNoPaymentList>div>ul>li>b:nth-of-type(1){
+					position: absolute;
+					right: 125px;
+					color: #8A8989;
+					letter-spacing: 1px;
+				}
+				.sectionNoPaymentList>div>ul>li>b:nth-of-type(2){
+					position: absolute;
+					right: 15px;
+					color: #8A8989;
+					letter-spacing: 3px;
+				}
+				.summaryNoPaymentList{
+					width: 100%;
+				    height: 42px;
+				    margin-bottom: 1px;
+				    position: fixed;
+				    background-color: #FFFFFF;
+				    border-bottom: 1px rgba(138, 137, 137, 0.14) solid;
+				    font-size: 15px;
+				    line-height: 42px;
+				    padding-left: 4%;
+				    transition: background-color 0.25s;
+				    -webkit-transition: background-color 0.25s;
+				    cursor: pointer;
+				    left: 0px;
+				    bottom: 0px;
+				    box-shadow: 0px -1px 3px #CCCCCC;
+				}
+				.summaryNoPaymentList>b:nth-of-type(1){
+					position: absolute;
+					left: 12px;
+				}
+				.summaryNoPaymentList>b:nth-of-type(2){
+					position: absolute;
+					right: 12px;
+				}
+				
+			</style>
+			<header class="header">
+				<h4>未交款</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+			</header>
+			<section class="sectionNoPaymentList">
+				<div>
+					<label class="titleLabel">以下款项未上交：</label>
+					<ul class="list">
+
+					</ul>
+				</div>
+				<span class="summaryNoPaymentList">
+					<b>员工：加载中...</b>
+					<b>总计：加载中...</b>
+				</span>
+			</section>
+			<script>
+				$.init=function(){
+					sendGetNoPaymentList(function(str){
+						var html="";
+						$(str).find("DocumentElement>MobileErpRecipesSales").each(function(){
+							var mny=$(this).children("BizRecipeDetail_RecipePrice").text();
+							mny=parseFloat(mny);
+							html+="<li>"+$(this).children("Recipe_Name").text()+"<b>"+$(this).children("RecipeUnit_Name").text()+"×"+$(this).children("BizRecipeDetail_Quantity").text()+"</b><b>&yen;"+mny.toFixed(2)+"</b></li>";
+						});
+						$(".sectionNoPaymentList>div>ul").html(html);
+						$.myScroll=new IScroll(".sectionNoPaymentList");
+						$(".summaryNoPaymentList>b:eq(0)").html("员工："+$.data_currentUserName);
+						$(".summaryNoPaymentList>b:eq(1)").html("总计：&yen;"+$.dataNHandReceived);
+					});
+					function sendGetNoPaymentList(parseDataFn){
+						var date=new Date();
+						var star=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+						date.setDate(date.getDate()+1);
+						var end=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+						$.ajax({
+							type:"get",
+							url:"xml/GetMobileErpRecipesSales.xml",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>

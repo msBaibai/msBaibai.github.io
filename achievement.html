@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>在线点餐</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.sectionAchievement{
+					margin-top: 3px;
+					height: calc(100% - 47px);
+				}
+				.sectionAchievement>label{
+				    background-color: #ffffff;
+				    top: -2px;
+				    z-index: 2;
+				}
+				.sectionAchievement>div{
+					width: 100%;
+					height: calc(100% - 175px);
+					position: relative;
+					overflow-y: hidden;
+				}
+				.sectionAchievement>div>ul{
+					position: absolute;
+				}
+				.sectionAchievement>div>ul>li>b:nth-of-type(1){
+					position: absolute;
+					right: 125px;
+					color: #8A8989;
+					letter-spacing: 1px;
+				}
+				.sectionAchievement>div>ul>li>b:nth-of-type(2){
+					position: absolute;
+					right: 15px;
+					color: #8A8989;
+					letter-spacing: 3px;
+				}
+				.summaryAchievement{
+					width: 100%;
+				    height: 42px;
+				    margin-bottom: 1px;
+				    position: fixed;
+				    background-color: #FFFFFF;
+				    border-bottom: 1px rgba(138, 137, 137, 0.14) solid;
+				    font-size: 15px;
+				    line-height: 42px;
+				    padding-left: 4%;
+				    transition: background-color 0.25s;
+				    -webkit-transition: background-color 0.25s;
+				    cursor: pointer;
+				    left: 0px;
+				    bottom: 0px;
+				    box-shadow: 0px -1px 3px #CCCCCC;
+				}
+				.summaryAchievement>b:nth-of-type(1){
+					position: absolute;
+					left: 12px;
+				}
+				.summaryAchievement>b:nth-of-type(2){
+					position: absolute;
+					right: 12px;
+				}
+				.sectionAchievement>ul{
+					width: 100%;
+					background-color: #FFFFFF;
+					box-shadow: 0px 0px 3px #333333;
+					position: relative;
+					top: -2px;
+					z-index: 1;
+				}
+				.sectionAchievement>ul>li{
+					width: 30%;
+					height: 40px;
+					background-color: #FFFFFF;
+					border: 1px rgba(0, 0, 0, 0.14) solid;
+					border-radius: 5px;
+					font-size: 16px;
+					line-height: 40px;
+					text-align: center;
+					display: inline-block;
+					box-sizing: border-box;
+					margin-bottom: 8px;
+					cursor: pointer;
+				}
+				.sectionAchievement>ul>li.active{
+					background-color: #27B4EA;
+				    color: #ffffff;
+				    border: 1px #27B4EA solid;
+				}
+				.sectionAchievement>ul>li:nth-of-type(3n+1){
+					margin-left: 2.5%;
+				}
+				.sectionAchievement>ul>li:nth-of-type(3n+2){
+					margin-left: 2.5%;
+					margin-right: 2.5%;
+				}
+				.sectionAchievement>ul>li:nth-of-type(3n+3){
+					margin-right: 2.5%;
+				}
+				
+			</style>
+			<header class="header">
+				<h4>业绩</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+			</header>
+			<section class="sectionAchievement">
+				<label class="titleLabel">
+					请选择时间:
+				</label>
+				<ul>
+					<li class="active">今日</li>
+					<li>本周</li>
+					<li>本月</li>
+					<li>上月</li>
+					<li>近两月</li>
+					<li>近三月</li>
+				</ul>
+				<div>
+					<ul class="list">
+
+					</ul>
+				</div>
+				<span class="summaryAchievement">
+					<b>员工：加载中...</b>
+					<b>总计：加载中...</b>
+				</span>
+			</section>
+			<script>
+				$.init=function(){
+					var liOptionJson={
+						"今日":getFormatCurrentDateData("日"),
+						"本周":getFormatCurrentDateData("周"),
+						"本月":getFormatCurrentDateData("月"),
+						"上月":getFormatPrevDateData("月"),
+						"近两月":getFormatMonthData(2),
+						"近三月":getFormatMonthData(3)
+					};
+					$.tap(".sectionAchievement>ul>li",function(){
+						$(".sectionAchievement>ul>li.active").removeClass("active");
+						$(this).addClass("active");
+						liClickGetRecipeMobileSaleQuery.call(this);
+					});
+					liClickGetRecipeMobileSaleQuery.call($(".sectionAchievement>ul>li:eq(0)")[0]);
+					$(".summaryAchievement>b:eq(0)").html("员工："+$.data_currentUserName);
+					function getFormatCurrentDateData(type){
+						var date= new Date();
+						var starTime="";
+						var dateEnd=new Date();
+						dateEnd.setDate(dateEnd.getDate()+1);
+						var endTime=dateEnd.getFullYear()+"-"+(dateEnd.getMonth()+1)+"-"+dateEnd.getDate();
+						if(type=="日"){
+							starTime=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+						}else if(type=="周"){
+							if(date.getDay()=="0")
+								date.setDate(date.getDate() - date.getDay() + 1 -7);	
+							else
+								date.setDate(date.getDate() - date.getDay() + 1);
+							starTime=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+						}else if(type=="月"){
+							starTime=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+01;
+						}
+						return starTime+","+endTime;
+					}
+					function getFormatPrevDateData(type){
+						var date= new Date();
+						var starTime="";
+						var endTime="";
+						if(type=="月"){
+							endTime=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+01;
+							date.setMonth(date.getMonth()-1)
+							starTime=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+01;
+						}
+						return starTime+","+endTime;
+					}
+					function getFormatMonthData(num){
+						var d=num*30;
+						var date= new Date();
+						var dateEnd=new Date();
+						dateEnd.setDate(dateEnd.getDate()+1);
+						var endTime=dateEnd.getFullYear()+"-"+(dateEnd.getMonth()+1)+"-"+dateEnd.getDate();
+						date.setDate(date.getDate()-d);
+						var	starTime=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+(date.getDate());
+						return starTime+","+endTime;
+					}
+					
+//					alert("今日："+getFormatCurrentDateData("日"));
+//					alert("本周："+getFormatCurrentDateData("周"));
+//					alert("本月："+getFormatCurrentDateData("月"));
+//					alert("上月："+getFormatPrevDateData("月"));
+//					alert("近两月："+getFormatMonthData(2));
+//					alert("近三月："+getFormatMonthData(3));
+					function liClickGetRecipeMobileSaleQuery(){
+						sendGetRecipeMobileSaleQuery(liOptionJson[$(this).html()],function(str){
+							var total=0;
+							var html="";
+							$(str).find("DocumentElement>MobileSaleQuery").each(function(){
+								var mny=$(this).children("BizRecipeDetail_ReceivedFee").text();
+								mny=parseFloat(mny);
+								total=parseFloat(total+mny);
+								html+="<li>"+$(this).children("Recipe_Name").text()+"<b>"+$(this).children("RecipeUnit_Name").text()+"×"+$(this).children("Number").text()+"</b><b>&yen;"+mny.toFixed(2)+"</b></li>";
+							});
+							$(".sectionAchievement>div>ul").html(html);
+							$.myScroll=new IScroll(".sectionAchievement>div");
+							$(".summaryAchievement>b:eq(1)").html("总计："+total.toFixed(2));
+						});
+					}
+					function sendGetRecipeMobileSaleQuery(time,parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/GetRecipeMobileSaleQuery.xml",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>

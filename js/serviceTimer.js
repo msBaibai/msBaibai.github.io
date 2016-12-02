@@ -1,0 +1,1 @@
+(function(a){var b=0,c=0;a.startCalculationTime=function(){b=(new Date).getTime()};a.endCalculationTime=function(){c=(new Date).getTime();var a=parseInt(c)-parseInt(b);c=b=0;return a}})($);

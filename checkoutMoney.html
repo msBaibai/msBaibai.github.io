@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>在线点餐</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.sectionCheckoutMoney{
+					margin-top: 3px;
+					height: calc(100% - 47px);
+					position: relative;
+					overflow-y: hidden;
+				}
+				.sectionCheckoutMoney>div{
+					width: 100%;
+					position: absolute;
+				}
+				
+				.sectionCheckoutMoney>div>ul:nth-of-type(1)>li>b{
+					position: absolute;
+				    right: 12px;
+				    color: #868686;
+				    top: 15px;
+				}
+				.sectionCheckoutMoney>div>ul:nth-of-type(1)>li>span{
+					position: absolute;
+					right: 12px;
+					color: #8A8989;
+					line-height: 46px;
+				}
+				.sectionCheckoutMoney>div>ul:nth-of-type(1)>li>span+b{
+					right: 30px;
+				}
+				.sectionCheckoutMoney>div>ul:nth-of-type(3)>li>input{
+					position: absolute;
+				    display: block;
+				    right: 38px;
+				    top: 35px;
+				}
+				.sectionCheckoutMoney>div>ul:nth-of-type(1)>li>b.colorRed{
+					color: #E05555;
+				}
+				.sectionCheckoutMoney>div>ul>li>input.switch{
+					position: absolute;
+				    right: 60px;
+				    top: 34px;
+				}
+				.sectionCheckoutMoney>div>ul:nth-of-type(2)>li>input.listInput{
+					position: absolute;
+				    display: block;
+				    right: 10px;
+				    top: 0px;
+				    text-align: right;
+				}
+				.forInputText{
+					height: 17px;
+				    line-height: 22px;
+				    box-sizing: content-box;
+				    padding-top: 15px;
+				    padding-bottom: 15px;
+				}
+				.loadBtn::after{
+					content: "请先选择支付方式";
+				}
+			</style>
+			<header class="header">
+				<h4>结账</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+			</header>
+			<section class="sectionCheckoutMoney">
+				<div>
+					<label class="titleLabel">以下为账单信息：</label>
+					<ul class="list">
+						<li>包厢<b class="badge"></b></li>
+						<li class="hrefTo" href="#checkoutMoneyInfo.html">应收<span class="glyphicon glyphicon-menu-right"></span><b class="badge colorRed">加载中...</b></li>
+					</ul>
+					<label class="titleLabel">以下为附加信息：</label>
+					<ul class="list">
+						<li>发票<input class="listInput forInputText" type="text" placeholder="请填写单位名称" /></li>
+					</ul>
+					<label class="titleLabel">请选择支付方式：</label>
+					<ul class="listRadius">
+						<li typeId="100">支付宝<input class="radio" name="payType" type="radio" /> </li>
+						<li typeId="1000">微信支付<input class="radio" name="payType" type="radio" /></li>
+					</ul>
+					<button class="payButton loadBtn"></button>
+				</div>
+			</section>
+			<script>
+				$.init=function(){
+					$.myScroll = new IScroll(".sectionCheckoutMoney");
+					$(".sectionCheckoutMoney>div>ul:eq(0)>li:eq(0)>b").html($.dataConfirmCheckedRoomName);
+					$.tap(".sectionCheckoutMoney>div>ul:eq(2)>li",function(){
+						$(this).children("input")[0].checked=true;
+						$(".sectionCheckoutMoney>div>button").removeClass("loadBtn").html("生成收款二维码");
+					});
+					function sendGetCheckoutMoney(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/GetRoomPayBillDetail.xml",
+							data:"method=get&url="+encodeURIComponent("GetRoomPayBillDetail/"+$.dataConfirmCheckedRoomId),
+//							url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetRoomPayBillDetail/"+$.dataConfirmCheckedRoomId,
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					sendGetCheckoutMoney(function(str){
+						$.data_sendGetCheckoutMoney=str;
+						$(str).find("DocumentElement>PayBillDetail").each(function(){
+							$(".sectionCheckoutMoney>div>ul:eq(0)>li:eq(1)>b").html("&yen;"+$(this).children("MustPaidPrice").text());
+							$.data_ftRecipe_Fee=$(this).children("MustPaidPrice").text();
+						});
+					});
+					function returnALIpay3CreateData(){
+						return JSON.stringify({
+							"total_amount":"",
+							"paraBody": "在线点餐",
+						    "paraAttach": null,
+						    //"paraTotalFee": parseInt($.data_ftRecipe_Fee)*100,
+						    "paraTotalFee": 1,
+						    "paraBillCreateIp": null,
+						    "paraAuthCode": null,
+						    "paraOpenId": null,
+						    "paraAppId": null,
+						    "paraMchId": null,
+						    "paraSubMchId": null,
+						    "paraCertFileName": null,
+						    "paraPassword": null,
+						    "paraDeviceInfo":null,
+						    "paraTimeStart":null,
+						    "paraTimeExpire":null,
+						    "paraGoodsTag":null
+						});
+					}
+					function returnWXpay3CreateData(){
+						return JSON.stringify({
+							"out_trade_no":"0",
+							"paraBody": "在线点餐",
+						    "paraAttach": null,
+						    //"paraTotalFee": parseInt($.data_ftRecipe_Fee)*100,
+						    "paraTotalFee": 1,
+						    "paraBillCreateIp": null,
+						    "paraAuthCode": null,
+						    "paraAppId":null,
+						    "paraMchId":null,
+						    "paraOpenId":null,
+						    "paraSubMchId":null,
+						    "paraDeviceInfo":null,
+						    "paraTimeStart":null,
+						    "paraTimeExpire":null,
+						    "paraGoodsTag":null
+						});
+					}
+					function sendPay(urlName,op,ktvid,date,paytype,mark,other,product,coupon_send_id,action,data,erpid,time,sign,parseDataFn){
+						$.wxAndAli=paytype;
+						var cs="op="+op+"&ktvid="+79396+"&date="+date+"&paytype="+paytype+"&mark="+mark+"&other="+other+"&product="+product+"&coupon_send_id="+coupon_send_id+"&action="+action+"&erpid="+erpid+"&time="+time+"&sign="+sign+"&coupon_value=0";
+						//var url="https://pay.ktvsky.com/wx?"+cs;
+						//&data="+data
+						//url=encodeURIComponent(url);
+						$.ajax({
+							type:"get",
+							url:"json/WxPay.json",
+							//url:url,
+							//url:"http://localhost/Req/WxPay?url="+url,
+							dataType:"text",
+							data:"data="+data,
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendGetDogName(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/KtvInit.xml",
+							data:"url="+encodeURIComponent("KtvInit")+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/KtvInit",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendInsertOLBusiness(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/InsertOLBusiness.xml",
+							data:"url="+encodeURIComponent("InsertOLBusiness/"+5+","+0.1+","+2+","+$.dataConfirmCheckedRoomId)+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/InsertOLBusiness/"+5+","+0.1+","+2+","+$.dataConfirmCheckedRoomId,
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					sendInsertOLBusiness(function(str){
+						$.data_OLBusiness=$(str).text();
+						//$(".sectionPayment>ul:eq(0)>li:eq(0)>span").html($.data_OLBusiness);
+					});
+					if(!$.data_ktvId){
+						sendGetDogName(function(str){
+							$.data_ktvId=$(str).find("DocumentElement>KtvInit>Ktvid").text();
+							$.data_dogName=$(str).find("DocumentElement>KtvInit>DogName").text();
+						});
+					}
+					$.tap(".sectionCheckoutMoney>div>.payButton",function(){
+						$.payType=$(".listRadius>li>input:checked").parent().attr("typeId");
+						var date=new Date();
+						var time=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+						if($.payType=="100"){
+							$.createConfirmBoxOK({"title":"系统提示","content":"支付宝支付暂未开通"});
+//							sendPay("AliPay","fastpay",$.data_ktvId,time,"ALI",$.dataConfirmCheckedRoomId,"","1122334","","SWEEPCODE",returnALIpay3CreateData(),$.data_OLBusiness,date.getTime(),"",function(str){
+//								str=$.parseJSON(str);
+//								$.data_codeUrl=str.qr_code;
+//								$.data_outTradeNo=str.order;
+//								if(!!$.data_codeUrl)
+//									window.location.href="#showQRcode.html";
+//								else
+//									$.createConfirmBoxOK({"title":"系统提示","content":str.sub_msg});
+//							});
+						}else if($.payType=="1000")
+							sendPay("WxPay","fastpay",$.data_ktvId,time,"WX",$.dataConfirmCheckedRoomId,"","1122334","","SWEEPCODE",returnWXpay3CreateData(),$.data_OLBusiness,date.getTime(),"",function(str){
+								str=$.parseJSON(str);
+								$.data_codeUrl=str.code_url;
+								$.data_outTradeNo=str.order;
+								if(!!$.data_codeUrl)
+									window.location.href="#showQRcode.html";
+								else
+									$.createConfirmBoxOK({"title":"系统提示","content":str.sub_msg});
+							});
+					});
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>

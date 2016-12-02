@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>移动ERP</title>
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/icon.png">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta content="white" name="apple-mobile-web-app-status-bar-style">
+		<meta content="telephone=no" name="format-detection">
+		<meta name="x5-fullscreen" content="true">
+		<meta name="full-screen" content="yes">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/confirmBox.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<script type="text/javascript" src="js/jquery-1.7.2.js" ></script>
+		<script type="text/javascript" src="js/isPC.js" ></script>
+		<script type="text/javascript" src="js/common.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/createConfirmBox.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/fileUpload.js" ></script>
+		<style>
+				*{
+					backface-visibility: hidden;
+				}
+				::-webkit-scrollbar{  
+		            width:0px;  
+		        }  
+		        ::-webkit-scrollbar-button {  
+		  			
+		        }  
+		        ::-webkit-scrollbar-track{  
+		            background-color:rgba(225,225,225,0);  
+		        }  
+		        ::-webkit-scrollbar-track-piece{  
+		            background-color:rgba(225,225,225,0); 
+		            -webkit-border-radius:4px;  
+		        }  
+		        ::-webkit-scrollbar-thumb{  
+		            background-color:rgba(225,225,225,0); 
+		            border:solid 1px #C0C0C0;  
+		            border-radius:4px;  
+		            
+		        }  
+		        ::-webkit-scrollbar-corner {  
+		            background-color:rgba(225,225,225,0); 
+		        }  
+		        ::-webkit-resizer {   
+		           background-repeat: no-repeat;  
+		           background-position: bottom right;  
+		        }  
+		        ::-webkit-scrollbar-thumb:hover{  
+		            background-color:rgba(225,225,225,0);  
+		        }
+		        html{
+		        	position: fixed;
+		        	top: 0px;
+		        	left: 0px;
+		        }
+				body{
+					margin: 0;
+					padding: 0;
+					font-size: 0px;
+					font-family: 'Helvetica Neue',Helvetica,sans-serif;
+					-webkit-user-select: none;
+					overflow: hidden;
+					background-color: rgba(185, 185, 185, 0.19);
+				}
+				body>div{
+					transform: scale(1,1);
+					-webkit-transform: scale(1,1);
+				}
+				ul{
+					margin: 0;
+					padding: 0;
+					list-style: none;
+				}
+				a{
+					cursor: pointer;
+				}
+				
+			</style>
+			<style>
+				.header{
+					width: 100%;
+					height: 44px;
+					background-color: #ffffff;
+					margin: 0;
+					padding: 0;
+					position: relative;
+					box-shadow: 0px 1px 3px #CCCCCC;
+				}
+				.header>a{
+					width: 54px;
+					height: 44px;
+					display: inline-block;
+					font-size: 20px;
+					position: absolute;
+					top: 0px;
+					text-align: center;
+					line-height: 44px;
+					text-decoration: none;
+				}
+				.header>a:nth-of-type(1){
+					left: 0px;
+				}
+				.header>a:nth-of-type(2){
+					right: 0px;
+				}
+				.header>h4{
+					width: 50%;
+					height: 100%;
+					display: inline-block;
+					padding: 0;
+					position: absolute;
+					left: 0px;
+					right: 0px;
+					margin: 0 auto;
+					text-align: center;
+					line-height: 44px;
+					font-size: 18px;
+				}
+			</style>
+	</head>
+	<body>
+		<div>
+			
+			<style>
+				.sectioncutImg{
+					margin-top: 3px;
+					position: relative;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
+					overflow: hidden;
+					background-color: #000000;
+				}
+				#myCanvas{
+					position: absolute;
+					backface-visibility: hidden;
+					transform-style: preserve-3d;
+					-webkit-transform-style: preserve-3d;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
+					z-index: 1;
+				}
+				.topDiv{
+					width: 100%;
+					background-color: rgba(0,0,0,0.5);
+					position: fixed;
+					top: 0px;
+					z-index: 2;
+					box-sizing: border-box;
+					border-bottom: 1px #FFFFFF solid;
+				}
+				.centerDiv{
+					width: 100%;
+					position: fixed;
+					margin:auto;
+				    left:0;
+				    right:0;
+				    top:0;
+				    bottom:0;
+				    z-index: 0;
+				}
+				.bottomDiv{
+					width: 100%;
+					background-color: rgba(0,0,0,0.5);
+					position: fixed;
+					bottom: 0px;
+					z-index: 2;
+					box-sizing: border-box;
+					border-top: 1px #FFFFFF solid;
+					transform: scale();
+				}
+				.transitionCanavs{
+					transition:-webkit-transform 0.25s;
+					-webkit-transition:-webkit-transform 0.25s;
+				}
+			</style>
+			<header class="header">
+				<h4>头像编辑</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<a class="submit"><span class="glyphicon glyphicon-ok"></span></a>
+			</header>
+			<section class="sectioncutImg">
+				<img id="img" style="position: fixed;top: -10000px;" />
+				<canvas id="myCanvas"></canvas>
+				<div class="topDiv"></div>
+				<div class="centerDiv"></div>
+				<div class="bottomDiv"></div>
+			</section>
+			<script>
+				
+				function init(){
+					var url="";
+					try{
+						url=sessionStorage.getItem("cutImgSrc");
+					}catch(e){}
+					if(!url||!!$.cutImgSrc)
+						url=$.cutImgSrc;
+					var myCanvas=document.getElementById("myCanvas");
+					var con=myCanvas.getContext("2d");
+					var imgLS=document.getElementById("img");
+					imgLS.src=url;
+					imgLS.onload=function(){
+						myCanvas.width=bodyWidth;
+				   		myCanvas.height=bodyWidth;
+				   		con.drawImage(imgLS,0,0,bodyWidth,bodyWidth);
+				   		with(myCanvas.style){
+							top=((sectionHeight-bodyWidth)/2)+"px";
+							left="0px";
+				   		}
+					}
+					function resize(w,h){
+						var imgData = con.getImageData(0,0,myCanvas.width,myCanvas.height);
+						myCanvas.width = w;
+						myCanvas.height = h;
+						con.putImageData(imgData,0,0);
+					}
+					$.tap(".submit",function(){
+						img.css("visibility","hidden");
+						var x=($(".centerDiv").offset().left-img.offset().left);
+						var y=($(".centerDiv").offset().top-img.offset().top);
+						var w=$(".centerDiv").width();
+						var h=$(".centerDiv").height();
+						x=parseInt(x/matrix[0]);
+						y=parseInt(y/matrix[0]);
+						w=parseInt(w/matrix[0]);
+						h=parseInt(h/matrix[0]);
+						var pixels = con.getImageData(x, y, w, h);
+						con.putImageData(pixels,0,0);
+						resize(w,h);
+				   		var imgUrl=myCanvas.toDataURL("image/png");
+				   		var resultImg=document.getElementById("img");
+				   		resultImg.src=imgUrl;
+				   		
+				   		$(".topDiv").remove();
+				   		$(".centerDiv").remove();
+				   		$(".bottomDiv").remove();
+				   		var lef=0;
+				   		with(resultImg.style){
+				   			width=w*matrix[0] +"px";
+				   			height=h*matrix[0]+"px";
+				   			top=((sectionHeight-bodyWidth)/2)+"px";
+				   			left=0+"px";
+				   		}
+				   		resultImg.onload=function(){
+				   			con.clearRect(0,0,myCanvas.width,myCanvas.height);
+					   		myCanvas.width=80;
+					   		myCanvas.height=80;
+					   		con.drawImage(resultImg,0,0,80,80);
+					   		imgUrl=myCanvas.toDataURL("image/png");
+					   		
+					   		img.remove();
+					   		
+					   		//$(".loading").css("display","block");
+					   		$.createConfirmBoxOK({"title":"系统提示","content":"上传成功！","click":function(){
+								window.location.href="#main.html";
+							}});
+				   		}
+					});
+					
+			        function rotateCanavs(imageRotate){
+			        	var w = myCanvas.width;
+				        var h = myCanvas.height;
+				        var rotation = Math.PI * imageRotate / 180;
+				        var c = Math.round(Math.cos(rotation) * 1000) / 1000;
+				        var s = Math.round(Math.sin(rotation) * 1000) / 1000;
+				        //旋转后canvas标签的大小
+				        canvasWidth=myCanvas.height = Math.abs(c*h) + Math.abs(s*w);
+				        canvasHeight=myCanvas.width = Math.abs(c*w) + Math.abs(s*h);
+				        //改变中心点
+				        if (rotation <= Math.PI/2) {
+				            con.translate(s*h,0);
+				        } else if (rotation <= Math.PI) {
+				            con.translate(canvasWidth,-c*h);
+				        } else if (rotation <= 1.5*Math.PI) {
+				            con.translate(-c*w,canvasHeight);
+				        } else {
+				            con.translate(0,-s*w);
+				        }
+				        con.rotate(rotation);
+				        con.drawImage(imgLS, 0, 0, w, h);
+				        con.restore();
+			        }
+					
+					
+					/*触摸*/
+					$(document).on("touchstart",function(){
+						event.preventDefault();
+					});
+					var img=$("#myCanvas");
+					var matrix=[1,0,0,1,0,0];
+					img.css({"transform":"matrix("+matrix.toString()+")","-webkit-transform":"matrix("+matrix.toString()+")"});
+					function eventScalcDiv(){
+						var scalOld=1;
+						var sectionZ=0;
+						var initX=0;
+						var initY=0;
+						var matrX=0;
+						var matrY=0;
+						var bol=true;
+						var bdeg=0;
+						var rotateDeg=0;
+						var bolRotate=true;
+						$(".sectioncutImg").off("touchstart").on("touchstart",function(e){
+							var e1=event.targetTouches[0];
+							var e2=event.targetTouches[1];
+							if(!!e1&&!!e2&&!!e1.pageX&&!!e2.pageX){
+								var sectionX=Math.abs(e1.pageX-e2.pageX);
+								var sectionY=Math.abs(e1.pageY-e2.pageY);
+								sectionZ=Math.sqrt(Math.pow(sectionX,2)+Math.pow(sectionY,2));
+								
+								
+								var a=0;
+								var b=0;
+								var c=0;
+								a=Math.abs(e1.pageY-e2.pageY);
+								b=Math.abs(e1.pageX-e2.pageX);
+								c=Math.sqrt(Math.pow(a,2)+Math.pow(b,2));
+								var bd=Math.acos((Math.pow(c,2)+Math.pow(b,2)-Math.pow(a,2))/(2*c*b));
+								bdeg=180/Math.PI*bd;
+								
+							}else if(!!e1&&!!e1.pageX){
+			                	initX=e1.pageX;
+			                	initY=e1.pageY;
+							}
+						});
+						$(".sectioncutImg").off("touchmove").on("touchmove",function(e){
+							var e1=event.targetTouches[0];
+							var e2=event.targetTouches[1];
+							if(!!e1&&!!e2&&!!e1.pageX&&!!e2.pageX){
+								var x=Math.abs(e1.pageX-e2.pageX);
+								var y=Math.abs(e1.pageY-e2.pageY);
+								var z=Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+								var scal=z/sectionZ;
+								matrix[0]=scal*scalOld;
+								matrix[3]=scal*scalOld;
+								
+								
+								var a=0;
+								var b=0;
+								var c=0;
+								a=Math.abs(e1.pageY-e2.pageY);
+								b=Math.abs(e1.pageX-e2.pageX);
+								c=Math.sqrt(Math.pow(a,2)+Math.pow(b,2));
+								var bd=Math.acos((Math.pow(c,2)+Math.pow(b,2)-Math.pow(a,2))/(2*c*b));
+								var deg=180/Math.PI*bd;
+								var rotate=deg-bdeg;
+								console.log(rotate);
+								if(rotate>15&&bolRotate){
+									rotateDeg-=90;
+									if(rotateDeg<0)
+										rotateDeg=270;
+									bolRotate=false;
+								}else if(rotate<-15&&bolRotate){
+									rotateDeg+=90;
+									if(rotateDeg>360)
+										rotateDeg=90;
+									bolRotate=false;
+								}
+								rotateCanavs(rotateDeg);
+								
+								if(matrix[0]<0||matrix[3]<0)
+									return;
+							}else if(!!e1&&!!e1.pageX&&bol){
+								var x=e1.pageX-initX;
+								var y=e1.pageY-initY;
+								if(Math.abs(x)<15&&Math.abs(y)<15)
+									return;
+								matrix[4]=matrX+x;
+			                	matrix[5]=matrY+y;
+								odX=e1.pageX;
+								odY=e1.pageY;
+							}
+							img.css({"transform":"matrix("+matrix.toString()+")","-webkit-transform":"matrix("+matrix.toString()+")"});
+						});
+						$(".sectioncutImg").off("touchend").on("touchend",function(e){
+							scalOld=matrix[0];
+							matrX=matrix[4];
+							matrY=matrix[5];
+							var e1=event.targetTouches[0];
+							bolRotate=true;
+							if(!!e1&&!!e1.pageX){
+								bol=false;
+							}else{
+								bol=true;
+							}
+							if(matrix[0]<1||matrix[3]<1){
+								matrix[0]=matrix[3]=1;
+								img.addClass("transitionCanavs");
+								img.css({"transform":"matrix("+matrix.toString()+")","-webkit-transform":"matrix("+matrix.toString()+")"});
+								var timer=window.setTimeout(function(){
+									clearTimeout(timer);
+									img.removeClass("transitionCanavs");
+								},250);
+							}
+								
+						});
+					}
+					eventScalcDiv();
+					
+					/*兼容布局*/
+					var bodyWidth=$(window).width();
+					var bodyHeight=$(window).height();
+					$("html").css({"width":bodyWidth+"px","height":bodyHeight+"px"});
+					$("body").css({"width":bodyWidth+"px","height":bodyHeight+"px"});
+					var sectionHeight=bodyHeight-47;
+					$(".sectioncutImg").css("height",sectionHeight+"px");
+					$(".topDiv").css("height",((sectionHeight-bodyWidth)/2)+"px");
+					$(".centerDiv").css("height",bodyWidth+"px");
+					$(".bottomDiv").css("height",((sectionHeight-bodyWidth)/2)+"px");
+				}
+				if(!$.toBack){
+					init();
+				}else{
+					$.init=init;
+				}
+			</script>
+		</div>
+	</body>
+	<foot>
+		<div class="loading" style="display: none;"></div>
+	</foot>
+</html>

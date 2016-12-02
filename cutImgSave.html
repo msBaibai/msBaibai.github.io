@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>移动ERP</title>
+		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icon.png">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/icon.png">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta content="white" name="apple-mobile-web-app-status-bar-style">
+		<meta content="telephone=no" name="format-detection">
+		<meta name="x5-fullscreen" content="true">
+		<meta name="full-screen" content="yes">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/confirmBox.css" />
+		<script type="text/javascript" src="js/jquery-1.7.2.js" ></script>
+		<script type="text/javascript" src="js/isPC.js" ></script>
+		<script type="text/javascript" src="js/common.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/createConfirmBox.js" ></script>
+		<script async="true" defer="defer" type="text/javascript" src="js/fileUpload.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				*{
+					backface-visibility: hidden;
+				}
+				::-webkit-scrollbar{  
+		            width:0px;  
+		        }  
+		        ::-webkit-scrollbar-button {  
+		  			
+		        }  
+		        ::-webkit-scrollbar-track{  
+		            background-color:rgba(225,225,225,0);  
+		        }  
+		        ::-webkit-scrollbar-track-piece{  
+		            background-color:rgba(225,225,225,0); 
+		            -webkit-border-radius:4px;  
+		        }  
+		        ::-webkit-scrollbar-thumb{  
+		            background-color:rgba(225,225,225,0); 
+		            border:solid 1px #C0C0C0;  
+		            border-radius:4px;  
+		            
+		        }  
+		        ::-webkit-scrollbar-corner {  
+		            background-color:rgba(225,225,225,0); 
+		        }  
+		        ::-webkit-resizer {   
+		           background-repeat: no-repeat;  
+		           background-position: bottom right;  
+		        }  
+		        ::-webkit-scrollbar-thumb:hover{  
+		            background-color:rgba(225,225,225,0);  
+		        }
+		        html{
+		        	position: fixed;
+		        	top: 0px;
+		        	left: 0px;
+		        }
+				body{
+					margin: 0;
+					padding: 0;
+					font-size: 0px;
+					font-family: 'Helvetica Neue',Helvetica,sans-serif;
+					-webkit-user-select: none;
+					overflow: hidden;
+					background-color: rgba(185, 185, 185, 0.19);
+				}
+				body>div{
+					transform: scale(1,1);
+					-webkit-transform: scale(1,1);
+				}
+				ul{
+					margin: 0;
+					padding: 0;
+					list-style: none;
+				}
+				a{
+					cursor: pointer;
+				}
+				
+			</style>
+			<style>
+				.header{
+					width: 100%;
+					height: 44px;
+					background-color: #ffffff;
+					margin: 0;
+					padding: 0;
+					position: relative;
+					box-shadow: 0px 1px 3px #CCCCCC;
+				}
+				.header>a{
+					width: 54px;
+					height: 44px;
+					display: inline-block;
+					font-size: 20px;
+					position: absolute;
+					top: 0px;
+					text-align: center;
+					line-height: 44px;
+					text-decoration: none;
+				}
+				.header>a:nth-of-type(1){
+					left: 0px;
+				}
+				.header>a:nth-of-type(2){
+					right: 0px;
+				}
+				.header>h4{
+					width: 50%;
+					height: 100%;
+					display: inline-block;
+					padding: 0;
+					position: absolute;
+					left: 0px;
+					right: 0px;
+					margin: 0 auto;
+					text-align: center;
+					line-height: 44px;
+					font-size: 18px;
+				}
+				.sectioncutImg{
+					margin-top: 3px;
+					position: relative;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
+					overflow: hidden;
+				}
+				.sectioncutImg>img{
+					position: absolute;
+					backface-visibility: hidden;
+					transform-style: preserve-3d;
+					-webkit-transform-style: preserve-3d;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
+					//transition: -webkit-transform 0.062s linear;
+					pointer-events:none;
+				}
+			</style>
+			<header class="header">
+				<h4>头像编辑</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<a class="refresh"><span class="glyphicon glyphicon-refresh"></span></a>
+			</header>
+			<section class="sectioncutImg">
+				<img src="img/icon.png" />
+			</section>
+			<script>
+				$(document).on("touchstart",function(){
+					try{event.returnValue = true;}catch(e){}
+				});
+//				window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) {
+//			       var str="";
+//			       str+="错误信息："+errorMessage+"\n";
+//			       str+="出错文件："+scriptURI+"\n";
+//			       str+="出错行号："+lineNumber+"\n";
+//			       str+="出错列号："+columnNumber+"\n";
+//			       str+="错误详情："+errorObj+"\n";
+//			       alert(str);
+//			    }
+				var img=$(".sectioncutImg>img");
+				var matrix=[1,0,0,1,0,0];
+				function eventScalcDiv(){
+					var scalOld=1;
+					var sectionZ=0;
+					var initX=0;
+					var initY=0;
+					var matrX=0;
+					var matrY=0;
+					var bol=true;
+					$(".sectioncutImg").off("touchstart").on("touchstart",function(e){
+						var e1=event.targetTouches[0];
+						var e2=event.targetTouches[1];
+						if(!!e1&&!!e2&&!!e1.pageX&&!!e2.pageX){
+							var sectionX=Math.abs(e1.pageX-e2.pageX);
+							var sectionY=Math.abs(e1.pageY-e2.pageY);
+							sectionZ=Math.sqrt(Math.pow(sectionX,2)+Math.pow(sectionY,2));
+						}else if(!!e1&&!!e1.pageX){
+		                	initX=e1.pageX;
+		                	initY=e1.pageY;
+						}
+					});
+					$(".sectioncutImg").off("touchmove").on("touchmove",function(e){
+						var e1=event.targetTouches[0];
+						var e2=event.targetTouches[1];
+						if(!!e1&&!!e2&&!!e1.pageX&&!!e2.pageX){
+							var x=Math.abs(e1.pageX-e2.pageX);
+							var y=Math.abs(e1.pageY-e2.pageY);
+							var z=Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+							var scal=z/sectionZ;
+							matrix[0]=scal*scalOld;
+							matrix[3]=scal*scalOld;
+							if(matrix[0]<0||matrix[3]<0)
+								return;
+						}else if(!!e1&&!!e1.pageX&&bol){
+							var x=e1.pageX-initX;
+							var y=e1.pageY-initY;
+							if(Math.abs(x)<15&&Math.abs(y)<15)
+								return;
+							matrix[4]=matrX+x;
+		                	matrix[5]=matrY+y;
+							odX=e1.pageX;
+							odY=e1.pageY;
+						}
+						img.css({"transform":"matrix("+matrix.toString()+")","-webkit-transform":"matrix("+matrix.toString()+")"});
+					});
+					$(".sectioncutImg").off("touchend").on("touchend",function(e){
+						scalOld=matrix[0];
+						matrX=matrix[4];
+						matrY=matrix[5];
+						var e1=event.targetTouches[0];
+						if(!!e1&&!!e1.pageX){
+							bol=false;
+						}else{
+							bol=true;
+						}
+					});
+				}
+				eventScalcDiv();
+//				function eventTranslateDiv(){
+//					var divPTop=0;
+//					var divPLeft=0;
+//					$(".sectioncutImg>img").off("touchstart").on("touchstart",function(){
+//						var e=event.targetTouches[0];
+//						var divP=$(this);
+//		                divPTop=e.pageY-divP.offset().top;
+//		                divPLeft=e.pageX-divP.offset().left;
+//		                var count=0;
+//		                $(".sectioncutImg>img").off("touchmove").on("touchmove",function(){
+//		                	if(count%2!=0)
+//		                		return;
+//		                	matrix[4]=e.pageX-divPLeft;
+//		                	matrix[5]=e.pageY-divPTop;
+//		                	if(matrix[5]<0)
+//		                		return;
+//		                	divP.css("transform","matrix("+matrix.toString()+")");
+//		                });
+//					}).off("touchend").on("touchend",function(){
+//						//initScalcMove();
+//						$(".sectioncutImg>img").off("touchmove");
+//					});
+//				}
+//				eventTranslateDiv();
+				$.tap(".refresh",function(){
+					window.history.go(0);
+				});
+			</script>
+		</div>
+		<script>
+			var bodyWidth=$(window).width();
+			var bodyHeight=$(window).height();
+			$("html").css({"width":bodyWidth+"px","height":bodyHeight+"px"});
+			$("body").css({"width":bodyWidth+"px","height":bodyHeight+"px"});
+			$(".sectioncutImg").css("height",(bodyHeight-47)+"px");
+		</script>
+	</body>
+</html>

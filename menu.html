@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -13,45 +14,24 @@
 		<meta content="yes" name="apple-mobile-web-app-capable">
 		<meta content="white" name="apple-mobile-web-app-status-bar-style">
 		<meta content="telephone=no" name="format-detection">
+		<meta name="x5-fullscreen" content="true">
+		<meta name="full-screen" content="yes">
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="css/header.css" />
 		<link rel="stylesheet" href="css/loading.css" />
+		<link rel="stylesheet" href="css/list.css" />
 		<script type="text/javascript" src="js/jquery.js" ></script>
-		<script type="text/javascript" src="js/bmob-min.js" ></script>
-		<script>
-			(function($){
-				function IsPC() {
-				    var userAgentInfo = navigator.userAgent;
-				    var Agents = ["Android", "iPhone",
-				                "SymbianOS", "Windows Phone",
-				                "iPad", "iPod"];
-				    var flag = true;
-				    for (var v = 0; v < Agents.length; v++) {
-				        if (userAgentInfo.indexOf(Agents[v]) > 0) {
-				            flag = false;
-				            break;
-				        }
-				    }
-				    return flag;
-				}
-				$.isPC=IsPC();
-			})(jQuery);
-		</script>
+		<script type="text/javascript" src="js/isPC.js" ></script>
+		<script type="text/javascript" src="js/iscroll.js" ></script>
 		<script type="text/javascript" src="js/common.js" ></script>
-		<script type="text/template" id="sectionMenuTplt" style="display: none;">
-			<li foodId="{[id]}">
-				<img src="{[img]}" />
-				<span>{[name]}</span>
-				<span>{[price]}元</span>
-				<span>原价：{[oldPrice]}元</span>
-				<span>已点<b>0</b>份</span>
-				<div>
-					<button class="disable"><span class="glyphicon glyphicon-minus"></span></button>
-					<input type="number" readonly="readonly" value="0" />
-					<button><span class="glyphicon glyphicon-plus"></span></button>
-				</div>
-			</li>
+		<script type="text/javascript" src="js/createConfirmBox.js" ></script>
+		<script>
+			$(function(){
+				$.init();
+			});
 		</script>
+		
 		<script>
 			(function($){
 				var u = navigator.userAgent;
@@ -59,81 +39,6 @@
 				var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
 				$.isAndroid=isAndroid;
 				$.isiOS=isiOS;
-				
-				$.isOK=1;
-				$.isLoadOK=function(){
-					$.isOK++;
-					if($.isOK==3){
-						$.isOK=1;
-						isInitLoadData=true;
-						$(".navMenu>ul").html($.menu_navMenu_ulData);
-						$(".sectionMenu>ul").html($.menu_sectionMenu_ulData);
-					}
-				}
-				
-				Bmob.initialize("9a0f83e3dbc4d00ea378b0af4023d9b8", "0ea01cc6e2669702ff1cb2dc6f2c6000");
-				/*
-					加载菜单数据
-				*/
-				var foodType = Bmob.Object.extend("foodType");
-				var query = new Bmob.Query(foodType);
-				var navMenuTplt="<li typeId=\"{[id]}\">{[name]}<span class=\"glyphicon glyphicon-menu-right\"></span></li>";
-				query.ascending("orderId");
-				$.menu_navMenu_ulData="<li typeId=\"\">全部<span class=\"glyphicon glyphicon-menu-right\"></span></li>";
-				var tpltVal="";
-				query.find({
-				  success: function(results) {
-				    for (var i = 0; i < results.length; i++) {
-				      var object = results[i];
-				      tpltVal=$.listSetVal(navMenuTplt,"id",object.id);
-				      tpltVal=$.listSetVal(tpltVal,"name",object.get('name'));
-				      $.menu_navMenu_ulData+=tpltVal;
-				    }
-				    $.isLoadOK();
-				  },
-				  error: function(error) {
-				    alert("查询失败: " + error.code + " " + error.message);
-				  }
-				});
-				/*
-				 * 加载列表数据
-				 */
-				var food = Bmob.Object.extend("food");
-				var query = null;
-				var sectionMenuTplt=document.getElementById("sectionMenuTplt").innerHTML;
-				function selectList(typeId,fn){
-					query = new Bmob.Query(food);
-					query.ascending("orderId");
-					if(!!typeId)
-						query.equalTo("foodType", typeId);
-					$.menu_sectionMenu_ulData="";
-					var tpltVal="";
-					query.find({
-					  success: function(results) {
-					  	
-					    for (var i = 0; i < results.length; i++) {
-					      var object = results[i];
-					      tpltVal=$.listSetVal(sectionMenuTplt,"id",object.id);
-					      tpltVal=$.listSetVal(tpltVal,"name",object.get('name'));
-					      tpltVal=$.listSetVal(tpltVal,"price",object.get('price'));
-					      tpltVal=$.listSetVal(tpltVal,"oldPrice",object.get('oldPrice'));
-					      var imgUrl=object.get('img')._url;
-					      imgUrl=imgUrl.replace("http://file.bmob.cn/","");
-					      tpltVal=$.listSetVal(tpltVal,"img",imgUrl);
-					      $.menu_sectionMenu_ulData+=tpltVal;
-					    }
-					    if(!!fn)
-					    	fn($.menu_sectionMenu_ulData);
-					  },
-					  error: function(error) {
-					    alert("查询失败: " + error.code + " " + error.message);
-					  }
-					});
-				}
-				selectList(null,function(){
-					$.isLoadOK();
-				});
-				$.menu_function_selectList=selectList;
 			})($);
 		</script>
 		<script type="text/javascript" src="js/openPage.js" ></script>
@@ -151,15 +56,19 @@
 				font-family: 'Helvetica Neue',Helvetica,sans-serif;
 				-webkit-user-select: none;
 				overflow-x: hidden;
+				background-color: rgba(185, 185, 185, 0.19);
+			}
+			a{
+				cursor: pointer;
 			}
 			body>div{
-				transition:-webkit-transform 0.25s;
-				-webkit-transition:-webkit-transform 0.25s;
+				transition:-webkit-transform 0.4s;
+				-webkit-transition:-webkit-transform 0.4s;
 				transform: translateX(0%);
 				-webkit-transform: translateX(0%);
 			}
 			::-webkit-scrollbar{  
-	            width:1px;  
+	            width:0px;  
 	        }  
 	        ::-webkit-scrollbar-button {  
 	  			
@@ -190,123 +99,8 @@
 	        ::-webkit-scrollbar-thumb:hover{  
 	            background-color:rgba(225,225,225,0);  
 	        }
-			.header{
-				width: 100%;
-				height: 44px;
-				//background-color: #f7f7f7;
-				background-color: #ffffff;
-				margin: 0;
-				padding: 0;
-				position: relative;
-				box-shadow: 0px 1px 3px #CCCCCC;
-			}
-			.header>a{
-				width: 44px;
-				height: 44px;
-				display: inline-block;
-				font-size: 20px;
-				position: absolute;
-				top: 0px;
-				text-align: center;
-				line-height: 44px;
-				//background-color: #0EC7AF;
-			}
-			.header>a:nth-of-type(1){
-				left: 0px;
-			}
-			.header>a:nth-of-type(2){
-				right: 0px;
-			}
-			.header>h4{
-				width: calc(100% - 88px);
-				height: 100%;
-				display: inline-block;
-				padding: 0;
-				position: absolute;
-				left: 0px;
-				right: 0px;
-				margin: 0 auto;
-				text-align: center;
-				line-height: 44px;
-				font-size: 18px;
-			}
-			.navMenu{
-				width: 70%;
-				height: 100%;
-				position: fixed;
-				top: 0px;
-				left: 0px;
-				transition:-webkit-transform 0.25s;
-				-webkit-transition:-webkit-transform 0.25s;
-				-webkit-transform: translateX(-100%);
-				background-color: #333333;
-				display: block;
-			}
-			.navMenu>h3{
-				font-size: 20px;
-				color: #FFFFFF;
-				padding-left: 20px;
-				padding-right: 20px;
-				font-weight: bold;
-			}
-			.navMenu>p{
-				font-size: 12px;
-				color: #B3B2B2;
-				padding-left: 20px;
-				padding-right: 20px;
-			}
-			.navMenu>ul{
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				list-style: none;
-				border-top: 1px rgba(0,0,0,0.3) solid;
-			}
-			.navMenu>ul>li{
-				width: 100%;
-				height: 42px;
-				font-size: 16px;
-				color: #FFFFFF;
-				border-bottom: 1px rgba(0,0,0,0.3) solid;
-				line-height: 42px;
-				position: relative;
-				border-left: 22px #333333 solid;
-			}
-			.navMenu>ul>li:active{
-				background-color: #222222;
-				border-left-color: #222222;
-			}
-			
-			.navMenu>ul>li>span{
-				position: absolute;
-				right: 15px;
-				font-size: 16px;
-				color: #FFFFFF;
-				line-height: 42px;
-			}
-			.navMenu+aside{
-				width: 30%;
-				height: 100%;
-				display: block;
-				left: 70%;
-				position: fixed;
+			.menuNavMenu{
 				display: none;
-			}
-			
-			.menuListShow{
-				transition:-webkit-transform 0.25s;
-				-webkit-transition:-webkit-transform 0.25s;
-				transform: translateX(70%);
-				-webkit-transform: translateX(70%);
-			}
-			
-			.menuListShow+.navMenu{
-				transform: translateX(0%);
-				-webkit-transform: translateX(0%);
-			}
-			.menuListShow~aside{
-				display: block;
 			}
 		</style>
 		<style id="ifWxStyle">
@@ -329,17 +123,142 @@
 					$("#ifWxStyle").remove();
 				}
 			})(jQuery);
-			
 		</script>
 	</head>
 	<body>
 		<div>
 			<style type="text/css">
+				.menuNavMenu{
+					width: 70%;
+					height: 100%;
+					position: fixed;
+					top: 0px;
+					left: 100%;
+					transition:-webkit-transform 0.4s;
+					-webkit-transition:-webkit-transform 0.4s;
+					transform: translateX(0%);
+					-webkit-transform: translateX(0%);
+					background-color: #333333;
+					display: block;
+				}
+				.menuNavMenu>h3{
+				    font-size: 25px;
+				    color: #C5C5C5;
+				    padding-left: 10px;
+				    padding-right: 10px;
+				    font-weight: bold;
+				    text-align: center;
+				}
+				.menuNavMenu>p{
+					font-size: 12px;
+					color: #B3B2B2;
+					padding-left: 20px;
+					padding-right: 20px;
+				}
+				.menuNavMenu>div>ul{
+					width: 100%;
+					margin: 0;
+					padding: 0;
+					list-style: none;
+					border-top: 1px rgba(0,0,0,0.3) solid;
+					box-sizing: border-box;
+				}
+				.menuNavMenu>div>ul>li{
+					width: 100%;
+					height: 42px;
+					font-size: 16px;
+					color: #FFFFFF;
+					border-bottom: 1px rgba(0,0,0,0.3) solid;
+					line-height: 42px;
+					position: relative;
+					cursor: pointer;
+					text-align: center;
+				}
+				.menuNavMenu>div>ul>li:active{
+					background-color: #222222;
+					border-left-color: #222222;
+				}
+				
+				.menuNavMenu>div>ul>li>span{
+					position: absolute;
+					right: 15px;
+					font-size: 16px;
+					color: #FFFFFF;
+					line-height: 42px;
+				}
+				.menuNavMenu>div:nth-of-type(1){
+					width: 100%;
+					height: calc(100% - 148px);
+					position: relative;
+					overflow: hidden;
+				}
+				.menuNavMenu>div:nth-of-type(2){
+					width: 100%;
+					height: 44px;
+					position: absolute;
+					bottom: 0px;
+				}
+				.menuNavMenu>div>a{
+					width: 88px;
+					height: 44px;
+					display: inline-block;
+					font-size: 16px;
+					position: absolute;
+					top: 0px;
+					text-align: center;
+					line-height: 44px;
+					text-decoration: none;
+					color: #FFFFFF;
+				}
+				.menuNavMenu>div>a>span{
+					font-size: 20px;
+					position: relative;
+					position: relative;
+				    top: 4px;
+				    left: -3px;
+				}
+				.menuNavMenu>div>a:nth-of-type(1){
+					left: 0px;
+				}
+				.menuNavMenu>div>a:nth-of-type(2){
+					right: 0px;
+				}
+				.menuNavMenu+aside{
+					width: 30%;
+					height: 100%;
+					display: block;
+				    top: 0px;
+    				left: 0px;
+					position: fixed;
+					display: none;
+					z-index: 888;
+				}
+				
+				.menuListShow{
+					transition:-webkit-transform 0.25s;
+					-webkit-transition:-webkit-transform 0.25s;
+					transform: translateX(-70%);
+					-webkit-transform: translateX(-70%);
+				}
+				
+				.menuListShow+.menuNavMenu{
+					transform: translateX(-100%);
+					-webkit-transform: translateX(-100%);
+				}
+				.menuListShow~aside{
+					display: block;
+				}
+			
+			
 				.sectionMenu{
-					margin-top: 3px;
 					height: 91%;
-					height: calc(100% - 47px);
-					overflow-y:auto;
+					height: calc(100% - 124px);
+				    overflow: auto;
+				    margin-top: 3px;
+				    position: relative;
+				    perspective: 500px;
+					-webkit-perspective: 500px;
+					backface-visibility: hidden;
 				}
 				.sectionMenu>ul{
 					margin: 0;
@@ -347,6 +266,10 @@
 					width: 100%;
 					overflow-x: hidden;
 					list-style: none;
+					position: absolute;
+					backface-visibility: hidden;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
 				}
 				.sectionMenu>ul>li{
 					width: 100%;
@@ -358,6 +281,9 @@
 					transition: -webkit-transform 0.25s;
 					-webkit-transition: -webkit-transform 0.25s;
 					cursor: pointer;
+					backface-visibility: hidden;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
 				}
 				
 				.sectionMenu>ul>li>img{
@@ -369,7 +295,7 @@
 				}
 				
 				.sectionMenu>ul>li>span{
-					position: absolute;/**/
+					position: absolute;
 				}
 				
 				.sectionMenu>ul>li>span:nth-of-type(1){
@@ -381,21 +307,23 @@
 				}
 				
 				.sectionMenu>ul>li>span:nth-of-type(2){
-					width: 30px;
+					width: auto;
 					bottom: 10px;
 					left: 100px;
 					font-size: 14px;
 					color: #0EC7AF;
 				}
-				.sectionMenu>ul>li>span:nth-of-type(3){
-					width: 80px;
+				.sectionMenu>ul>li>span>span{
+					width: auto;
 					bottom: 10px;
-					left: 130px;
+					//left: 130px;
 					font-size: 12px;
-					text-decoration: line-through;
+					//text-decoration: line-through;
 					color: #CCCCCC;
+					margin-left: 3px;
+					letter-spacing: 3px;
 				}
-				.sectionMenu>ul>li>span:nth-of-type(4){
+				.sectionMenu>ul>li>span:nth-of-type(3){
 					width: 80px;
 					top: 30px;
 					right: 30px;
@@ -404,15 +332,15 @@
 					letter-spacing: 2px;
 					text-align: right;
 				}
-				.sectionMenu>ul>li>span:nth-of-type(4)>b{
+				.sectionMenu>ul>li>span:nth-of-type(3)>b{
 					font-size: 18px;
 					color: #E05841;
 				}
 				.sectionMenu>ul>li>div{
-					width: 120px;
+					width: 160px;
 					height: 100%;
 					position: absolute;
-					right: -120px;
+					right: -160px;
 					text-align: center;
 					background-color: #F7F7F7;
 					box-shadow: 0px 0px 3px #CCCCCC;
@@ -420,10 +348,10 @@
 				.sectionMenu>ul>li>div>button{
 					font-size: 14px;
 					display: inline-block;
-					width: 34px;
-					height: 34px;
+					width: 53px;
+					height: 53px;
 					position: relative;
-					top: 23px;
+					top: 15%;
 					border: 1px #CCCCCC solid;
 					background-color: #FFFFFF;
 					outline: none;
@@ -450,16 +378,16 @@
 				}
 				.sectionMenu>ul>li>div>button>span{
 					position: absolute;
-					line-height: 30px;
-					left: 10px;
+					line-height: 50px;
+					left: 19px;
 				}
 				.sectionMenu>ul>li>div>input{
 					font-size: 14px;
 					display: inline-block;
 					width: 34px;
-					height: 34px;
+					height: 53px;
 					position: relative;
-					top: 23px;
+					top: 15%;
 					outline: none;
 					border: 1px #CCCCCC solid;
 					background-color: #FFFFFF;
@@ -476,88 +404,259 @@
 					margin: 0;
 				}
 				.sectionMenu>ul>li.active{
-					-webkit-transform: translateX(-120px);
+					-webkit-transform: translateX(-160px);
+				}
+				.sreachForm{
+					width: 100%;
+					height: 35px;
+				    position: relative;
+				    background-color: #ffffff;
+				    padding-bottom: 5px;
+				    box-shadow: 0px 2px 3px #CCCCCC;
+				}
+				.sreachForm>input{
+					width: 98%;
+					height: 26px;
+					font-size: 15px;
+					margin: 0 auto;
+					outline: none;
+					display: block;
+					border-radius: 13px;
+					border: 1px rgba(0,0,0,0.3) solid;
+					padding: 5px 20px 5px 15px;
+					position: absolute;
+					top: 2px;
+					left: 0;
+					right: 0;
+					z-index: 2;
+					-webkit-transition: border-color ease-in-out .15s;
+					transition: border-color ease-in-out .15s;
+					outline: none;
+					box-shadow: none;
+					background-color: rgb(255, 255, 255);
+					-webkit-appearance: none;
+				}
+				.sreachForm>input::-webkit-input-placeholder{
+					font-size: 13px;
+					line-height: 20px;
+				}
+				.sreachForm>input.active{
+				    border-color: #66afe9;
+				}
+				.cartNum{
+					width: 16px;
+					height: 16px;
+				    background-color: #E05841;
+				    border-radius: 50%;
+				    line-height: 12px;
+				    text-align: center;
+				    font-size: 14px;
+				    position: absolute;
+				    display: block;
+				    top: -5px;
+				    right: -6px;
+				    color: #FFFFFF;
+				}
+				.fictitiousInput{
+					width: 100%;
+					height: calc(100% - 79px);
+					position: fixed;
+					bottom: 0px;
+					z-index: 999;
+					transition: transform 0.25s;
+					-webkit-transition: -webkit-transform 0.25s;
+					-webkit-transform: translateY(100%);
+				}
+				.fictitiousInput>div{
+					width: 100%;
+					height: 60%;
+					background-color: rgb(226, 226, 226);
+					box-shadow: 0px 0px 5px #333333;
+					position: absolute;
+					bottom: 0px;
+				}
+				.sreachForm>input.active+.fictitiousInput{
+					-webkit-transform: translateY(0%);
+				}
+				.fictitiousInput>div>div{
+					width: 100%;
+					height: 16%;
+					margin-top: 2.5%;
+					text-align: center;
+					line-height: 6.5vh;
+				}
+				.fictitiousInput>div>div>span{
+					height: 90%;
+					font-size: 20px;
+					display: inline-block;
+					box-shadow: 0px 2px 2px #666666;
+					cursor: pointer;
+					background-color: #FBFBFB;
+					border-radius: 5px;
+				}
+				.sreachForm .fictitiousInput>div>div>span:active {
+				    background-color: #D0D0D0;
+				}
+				.fictitiousInput>div>div:nth-of-type(1)>span{
+					width: 46%;
+					left: 3%;
+					margin-right: 2%;
+					position: relative;
+					display: table;
+					float: left;box-sizing: border-box;
+				}
+				.fictitiousInput>div>div:nth-of-type(1)>span>span{
+					width: 100%;
+					font-size: 30px;
+				    color: #ffffff;
+				    vertical-align:middle;display:table-cell;
+				}
+				.fictitiousInput>div>div:nth-of-type(1)>span:nth-of-type(1){
+					background-color: #D25050;
+				}
+				.fictitiousInput>div>div:nth-of-type(1)>span:nth-of-type(2){
+					background-color: #4A96D8;
+				}
+				.fictitiousInput>div>div:nth-of-type(2)>span{
+					width: 9%;
+					margin-left: 0.5%;
+					margin-right: 0.5%;
+				}
+				.fictitiousInput>div>div:nth-of-type(3)>span{
+					width: 9%;
+					margin-left: 0.5%;
+					margin-right: 0.5%;
+				}
+				.fictitiousInput>div>div:nth-of-type(4)>span{
+					width: 9%;
+					margin-left: 0.5%;
+					margin-right: 0.5%;
+				}
+				.fictitiousInput>div>div:nth-of-type(5)>span{
+					width: 9%;
+					margin-left: 0.5%;
+					margin-right: 0.5%;
+				}
+				.footer{
+				    width: 100%;
+				    height: 42px;
+				    margin-bottom: 1px;
+				    position: fixed;
+				    background-color: #FFFFFF;
+				    border-bottom: 1px rgba(138, 137, 137, 0.14) solid;
+				    font-size: 15px;
+				    line-height: 42px;
+				    padding-left: 4%;
+				    transition: background-color 0.25s;
+				    -webkit-transition: background-color 0.25s;
+				    cursor: pointer;
+				    left: 0px;
+				    bottom: 0px;
+				    box-shadow: 0px -1px 3px #CCCCCC;
+				}
+				.toConfirm{
+				    position: absolute;
+				    right: 15px;
+				    height: 32px;
+				    line-height: 32px;
+				    font-size: 16px;
+				    background-color: #30BB1E;
+				    padding: 0px 10px 0px 6px;
+				    color: #ffffff;
+				    top: 5px;
+				    font-weight: bold;
+				    text-decoration: none;
+				    border-radius: 5px;
+				    transition: background-color 0.25s;
+				    -webkit-transition: background-color 0.25s;
+				}
+				.toConfirm:active{
+					background-color: #32AB22;
+				}
+				.toConfirm>span{
+				    font-size: 20px;
+					position: relative;
+					top: 5px;
+					left: 1px;
+				}
+				.toConfirm:hover, .toConfirm:focus {
+				    color: #ffffff;
+				    text-decoration: none;
 				}
 			</style>
 			<header class="header">
-				
-				<h4>在线点餐</h4>
+				<h4>点餐</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
 				<a class="menuListShowBtn"><span class="glyphicon glyphicon-align-justify"></span></a>
-				<a href="#confirm.html" class="toHref"><span class="glyphicon glyphicon-ok"></span></a>
 			</header>
+			<form class="sreachForm" onsubmit="event.preventDefault();">
+				<input type="text" placeholder="快速检索" readonly="readonly" />
+				<div class="fictitiousInput">
+					<div>
+						<div class="operation"><span>&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></span><span>&nbsp;<span class="glyphicon glyphicon-arrow-left"></span></span></div>
+						<div><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></div>
+						<div><span>Q</span><span>W</span><span>E</span><span>R</span><span>T</span><span>Y</span><span>U</span><span>I</span><span>O</span><span>P</span></div>
+						<div><span>A</span><span>S</span><span>D</span><span>F</span><span>G</span><span>H</span><span>J</span><span>K</span><span>L</span></div>
+						<div><span>Z</span><span>X</span><span>C</span><span>V</span><span>B</span><span>N</span><span>M</span></div>
+					</div>
+				</div>
+			</form>
 			<section class="sectionMenu">
 				<ul>
 					
 				</ul>
 			</section>
-			<footer>
-				
+			<footer class="footer">
+				<b>加载中...</b>
+				<a class="toConfirm">选好了<span class="glyphicon glyphicon-shopping-cart"><b class="cartNum">0</b></span></a>
 			</footer>
+			<script type="text/template" id="sectionMenuTplt" style="display: none;">
+				<li foodId="{[recipeInfo_ID]}" price="{[recipe_UnitPrice]}" mark="{[recipe_HeaderSoundSequence]}" isTaoCan="{[recipe_IsTaoCan]}" recipePriceGroup_ID="{[recipePriceGroup_ID]}" recipePriceGroup_GroupID="{[recipePriceGroup_GroupID]}">
+					<img src="img/zw.jpg" />
+					<span>{[recipe_Name]}</span>
+					<span>{[recipe_UnitPrice]}元<span>/{[recipeUnit_Name]}</span></span>
+					<span>已点<b>{[num]}</b>份</span>
+					<div>
+						<button class="listLiBtnRemove disable"><span class="glyphicon glyphicon-minus"></span></button>
+						<input type="number" readonly="readonly" value="{[num]}" />
+						<button class="listLiBtnAdd"><span class="glyphicon glyphicon-plus"></span></button>
+					</div>
+				</li>
+			</script>
 			<script type="text/javascript">
-			var menuData={};
-			function menuDataAdd(key,val){
-				menuData[key]=val;
-				sessionStorage.setItem("menuData",JSON.stringify(menuData));
-			}
-			function menuDataSetList(){
-				if(JSON.stringify(menuData)!="{}"){
-					for(var i in menuData){
-						var li=$(".sectionMenu>ul>li[foodId='"+i+"']");
-						var valJson=menuData[i];
-						li.children("span").children("b").html(valJson.num);
-						li.children("div").children("input").val(valJson.num);
-						li.children("div").children("button:eq(0)").removeClass("disable");
-					}
-				}
-			}
-			var isInitLoad=false;
-			var isInitLoadData=false;
-			$.init=function(){
-				if(JSON.stringify(menuData)=="{}"){
-					menuData=$.parseJSON(sessionStorage.getItem("menuData"));
-					if(!menuData)
-						menuData={};
-				}
-				isInitLoad=true;
-//					window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) {
-//				       var str="";
-//				       str+="错误信息："+errorMessage+"\n";
-//				       str+="出错文件："+scriptURI+"\n";
-//				       str+="出错行号："+lineNumber+"\n";
-//				       str+="出错列号："+columnNumber+"\n";
-//				       str+="错误详情："+errorObj+"\n";
-//				       alert(str);
-//				    }
-					localStorage.clear();
-					//$.preLoadPage("confirm.html");
-					//$.preLoadPage("confirm.html");
+				$.init=function(){
 					var liClick=function(e){
 						e.stopPropagation();
-						var bol=true;
-						if($(this).hasClass("active"))
-							bol=false;
+						var bol=$(this).hasClass("active");
 						$(".sectionMenu>ul>li.active").removeClass("active");
-						if(bol)
+						if(!bol)
 							$(this).addClass("active");
 					}
 
 					var btn0Click=function(e){
-						var input=$(this).next();
+						var _this=$(this);
+						var input=_this.next();
 						var val=parseInt(input.val());
-						if(val==1)
-							$(this).addClass("disable");
-						else if(val==0)
-							return;
-						input.val(val-1);
-						var li=$(this).parent().parent();
+						var li=_this.parent().parent();
 						var nameSpan=li.children("img").next();
 						var priceSpan=nameSpan.next();
-						var valJson={};
-						valJson.num=val-1;
-						valJson.name=nameSpan.html();
-						valJson.price=parseFloat(priceSpan.html());
-						menuDataAdd($(this).parent().parent().attr("foodId"),valJson);
-						$(this).parent().prev().children("b").html((val-1));
+						var isTaoCan=li.attr("isTaoCan");
+						if(val==1){
+							$.createConfirmBox({"title":"提示","content":"是否确认取消？","click":function(){
+								_this.addClass("disable");
+								input.val(val-1);
+								$.menuDataDelete(li.attr("foodId"));
+								_this.parent().prev().children("b").html((val-1));
+								$(".cartNum").html($.getJsonLength());
+							}});
+						}else{
+							if(val==0)
+								return;
+							input.val(val-1);
+							$.menuDataAdd(li.attr("foodId"),$.createValJson(val-1,nameSpan.html(),parseFloat(priceSpan.html()),isTaoCan,"0",""));
+							_this.parent().prev().children("b").html((val-1));
+							$(".cartNum").html($.getJsonLength());
+						}
 					}
 					var btn1Click=function(e){
 						var input=$(this).prev();
@@ -568,13 +667,10 @@
 						var li=$(this).parent().parent();
 						var nameSpan=li.children("img").next();
 						var priceSpan=nameSpan.next();
-						var valJson={};
-						valJson.num=val+1;
-						valJson.name=nameSpan.html();
-						valJson.price=parseFloat(priceSpan.html());
-						
-						menuDataAdd($(this).parent().parent().attr("foodId"),valJson);
+						var isTaoCan=li.attr("isTaoCan");
+						$.menuDataAdd(li.attr("foodId"),$.createValJson(val+1,nameSpan.html(),parseFloat(priceSpan.html()),isTaoCan,"0",""));
 						$(this).parent().prev().children("b").html((val+1));
+						$(".cartNum").html($.getJsonLength());
 					}
 					
 					var stopClick=function(e){
@@ -583,25 +679,6 @@
 					var menuListShowBtnClick=function(e){
 						e.stopPropagation();
 						$("body>div").addClass("menuListShow");	
-					}
-					
-					
-					
-					function bindLiEvent(){
-						if(!$.isPC){
-//							$(".sectionMenu>ul>li").each(function(){
-//								$.touchObj($(this),"click",liClick);
-//							});
-							$(".sectionMenu>ul>li").each(function(){
-								$(this).find("div>button:eq(0)").on("touchend",btn0Click);
-								$(this).find("div>button:eq(1)").on("touchend",btn1Click);
-							});
-						}else{
-							$(".sectionMenu>ul>li").each(function(){
-								$(this).find("div>button:eq(0)").on("click",btn0Click);
-								$(this).find("div>button:eq(1)").on("click",btn1Click);
-							});
-						}
 					}
 					var asideClick=function(e){
 						$("body>div").removeClass("menuListShow");
@@ -612,55 +689,373 @@
 					$.tap(".sectionMenu>ul>li>div",stopClick);
 					$.tap(".menuListShowBtn",menuListShowBtnClick);
 					$.tap("aside",asideClick);
-					$(function(){
-						$.tap(".navMenu>ul>li",asideClick);
-						$.tap(".navMenu>ul>li",function(){
-							$.menu_function_selectList($(this).attr("typeId"),function(str){
-								$(".sectionMenu>ul").html(str);
-								bindLiEvent();
-								menuDataSetList();
-							});
-						})
-						$(".navMenu>ul").html($.menu_navMenu_ulData);
-						$(".sectionMenu>ul").html($.menu_sectionMenu_ulData);
-						bindLiEvent();
-						menuDataSetList();
+					$.tap(".listLiBtnRemove",btn0Click);
+					$.tap(".listLiBtnAdd",btn1Click);
+					$.tap(".sectionMenu",function(e){
+						e.stopPropagation();
 					});
-					
-					
+					$.tap(".sectionMenu>ul>li>div>input",function(e){
+						e.stopPropagation();
+						var input=$(this);
+						var li=input.parent().parent();
+						var name=input.parent().parent().children("span").first().html();
+						$.createConfirmBoxInputNumber({"title":"修改数量","content":"请输入"+name+"数量","placeholder":"当前数量:"+input.val(),"click":function(){
+							var num=$(".confirmBoxInputNumber>div>input").val();
+							$(".confirmBoxInputNumber>div>input").val("");
+							if(/^[0-9]+$/.test(num)){
+								if(parseInt(num)<100){
+									input.val(num);
+									input.parent().prev().children("b").html(num);
+									var btn=input.prev();
+									btn.removeClass("disable");
+									if(!!$.getMenuData(li.attr("foodId")))
+										$.getMenuData(li.attr("foodId")).num=num;
+									else
+										$.menuDataAdd(li.attr("foodId"),$.createValJson(num,li.children("span:eq(0)").html(),parseFloat(li.attr("price")),li.attr("isTaoCan"),"0",""));
+									$.saveMenuData();
+									$(".cartNum").html($.getJsonLength());
+								}else{
+									$.altAuto("数量过大");
+								}
+							}else{
+								$.altAuto("输入不正确");
+							}
+						}});
+					});
+					$(".menuHide").off("click").on("click",function(){
+						$(".menuNavMenu").css("display","none");
+					});
+					$.tap(".toConfirm",function(){
+						window.location.href="#confirm.html";
+					});
+					$(".cartNum").html($.getJsonLength());
+					function sreachFormInputInput(){
+						if(!$(this).val()){
+							$(".sectionMenu>ul").html($.dataOldListDataForInput);
+							$.myScroll.refresh();
+						}else{
+							sendSerchRecipes($(this).val().toUpperCase(),function(str){
+								var sectionMenuTplt=document.getElementById("sectionMenuTplt").innerHTML;
+								var html=createDomHtml(sectionMenuTplt,str);
+								$(".sectionMenu>ul").html(html);
+								$.myScroll.refresh();
+							});
+						}
+					}
+					$.tap(".fictitiousInput>div>div:not(.operation)>span",function(){
+						$(".sreachForm>input").val($(".sreachForm>input").val()+$(this).html());
+						sreachFormInputInput.call($(".sreachForm>input")[0]);
+					});
+					$.tap(".fictitiousInput>div>div.operation>span:eq(0)",function(){
+						$(".sreachForm>input").val("");
+						sreachFormInputInput.call($(".sreachForm>input")[0]);
+					});
+					$.tap(".fictitiousInput>div>div.operation>span:eq(1)",function(){
+						var str=$(".sreachForm>input").val();
+						$(".sreachForm>input").val(str.substring(0,str.length-1));
+						sreachFormInputInput.call($(".sreachForm>input")[0]);
+					});
+					$.tap(".sreachForm>input",function(e){
+						e.stopPropagation();
+						event.preventDefault();
+						$(this).addClass("active");
+					});
+					$.tap(".fictitiousInput",function(){
+						$(".sreachForm>input").removeClass("active");
+					});
+					$(".fictitiousInput").on("touchstart",function(e){
+						e.preventDefault();
+						event.preventDefault();
+					});
+					$.tap(".fictitiousInput>div",function(e){
+						e.stopPropagation();
+					});
+					$.tap(".menuNavMenu>div>ul>li",function(){
+						asideClick();
+						$(".loading").css("display","block");
+						$(".menuListShowBtn").html($(this).attr("recipeName"));
+						selectList($(this).attr("typeId"),function(html){
+							$.dataOldListDataForInput=html;
+							$(".sectionMenu>ul").html(html);
+							$(".loading").css("display","none");
+							$.myScroll.refresh();
+						});
+					});
+					$.tap(".menuNavMenu>div>ul>li.recomend",function(){
+						$(".menuListShowBtn").html($(this).attr("recipeName"));
+						selectRecomendRecipes(function(html){
+							$.dataOldListDataForInput=html;
+							$(".sectionMenu>ul").html(html);
+							$.myScroll.refresh();
+						});
+					});
+					$.myScroll = new IScroll(".sectionMenu");
+					$.myScrollMenu = new IScroll(".myScrollMenu");
+					sendGetAllRecomendRecipes(function(str){
+						$.data_sendGetAllRecomendRecipesForJson={};
+						$(str).find("DocumentElement>GetAllRecomendRecipes").each(function(){
+							var obj={};
+							obj=xmlToJsonGetObj.call(this,obj);
+							$.data_sendGetAllRecomendRecipesForJson[obj.recipeId]=obj;
+						});
 						
+						selectRecomendRecipes(function(html){
+							$.dataOldListDataForInput=html;
+							$(".sectionMenu>ul").html(html);
+							$.myScroll.refresh();
+						});
+						
+					});
+					sendSelectRecipeInfo(function(str){
+						$.data_sendSelectRecipeInfoForJson={};
+						$(str).find("dsRecipes>Recipes").each(function(){
+							var obj={};
+							obj=xmlToJsonGetObj.call(this,obj);
+							if(!$.data_sendSelectRecipeInfoForJson[obj.typeId]){
+								$.data_sendSelectRecipeInfoForJson[obj.typeId]={};
+							}
+							$.data_sendSelectRecipeInfoForJson[obj.typeId][obj.recipeId]=obj;
+						});
+					});
+					$(".footer>b").html("房间名称:"+$.dataConfirmCheckedRoomName);
+//					$(".menuNavMenu>h3").html("当前房间:"+$.dataConfirmCheckedRoomName);
 					
-					if(!$.isPC){
-						$(".navMenu>ul>li").on("touchstart",function(){});
+					
+					function xmlToJsonGetObj(obj){
+						obj.typeId=$(this).children("recipe_TypeID").text();
+						obj.recipeId=$(this).children("Recipe_ID").text();
+						obj.recipeName=$(this).children("Recipe_Name").text();
+						obj.recipeUnitPrice=parseFloat($(this).children("Recipe_UnitPrice").text()).toFixed(2);
+						obj.recipeUnitName=$(this).children("RecipeUnit_Name").text();
+						obj.recipeHeaderSoundSequence=$(this).children("Recipe_HeaderSoundSequence").text();
+						obj.recipeIsTaoCan=$(this).children("Recipe_IsTaoCan").text();
+						obj.recipePriceGroupId=$(this).children("RecipePriceGroup_ID").text();
+						obj.recipePriceGroupGroupId=$(this).children("RecipePriceGroup_GroupID").text();
+						return obj;
+					}
+					
+					function createDomHtml(sectionMenuTplt,typeJSON){
+						var html="";
+						var tpltVal="";
+						for(var i in typeJSON){
+							var obj=typeJSON[i];
+							obj.num=0;
+							var menuDataObj=$.getMenuData(obj.recipeId);
+							if(!!menuDataObj)
+								obj.num=menuDataObj.num;
+							tpltVal=$.listSetVal(sectionMenuTplt,"recipeInfo_ID",obj.recipeId);
+						    tpltVal=$.listSetVal(tpltVal,"recipe_Name",obj.recipeName);
+						    tpltVal=$.listSetVal(tpltVal,"recipe_UnitPrice",obj.recipeUnitPrice);
+						    tpltVal=$.listSetVal(tpltVal,"recipeUnit_Name",obj.recipeUnitName);
+						    tpltVal=$.listSetVal(tpltVal,"recipe_HeaderSoundSequence",obj.recipeHeaderSoundSequence);
+						    tpltVal=$.listSetVal(tpltVal,"recipe_IsTaoCan",obj.recipeIsTaoCan);
+						    tpltVal=$.listSetVal(tpltVal,"recipePriceGroup_ID",obj.recipePriceGroupId);
+						    tpltVal=$.listSetVal(tpltVal,"recipePriceGroup_GroupID",obj.recipePriceGroupGroupId);
+						    tpltVal=$.listSetVal(tpltVal,"num",obj.num);
+						    if(obj.num>0)
+						    	tpltVal=tpltVal.replace(new RegExp(" disable","ig"),"");
+						    html+=tpltVal;
+						}
+						return html;
 					}
 					
 					
+					/*
+						加载菜单数据
+					*/
+					var menuNavMenuTplt="<li recipeName=\"{[recipeType_Name]}\" typeId=\"{[recipeType_ID]}\">{[recipeType_Name]}</li>";
+					sendSelectRecipeTypes(function(str){
+						var html="<li recipeName=\"推荐\" class=\"recomend\">推荐</li>";
+						var tpltVal="";
+						$(str).find("DocumentElement>SmallClass").each(function(){
+						    tpltVal=$.listSetVal(menuNavMenuTplt,"recipeType_ID",$(this).children("RecipeType_ID").text());
+						    tpltVal=$.listSetVal(tpltVal,"recipeType_Name",$(this).children("RecipeType_Name").text());
+						    html+=tpltVal;
+						});
+						$(".menuNavMenu>div>ul").html(html);
+						$.myScrollMenu.refresh();
+					});
+					/*
+					 * 加载列表数据
+					 */
+					function selectList(typeId,fn){
+						var sectionMenuTplt=document.getElementById("sectionMenuTplt").innerHTML;
+						sendSelectRecipeInfo(function(str){
+							if(!typeId)
+								return;
+							var typeJSON=$.data_sendSelectRecipeInfoForJson[typeId];
+							var html=createDomHtml(sectionMenuTplt,typeJSON);
+							if(!!fn)
+								fn(html);
+						});
+					}
+					
+					/*
+					 * 加载推荐列表数据
+					 */
+					function selectRecomendRecipes(fn){
+						var sectionMenuTplt=document.getElementById("sectionMenuTplt").innerHTML;
+						var json=$.data_sendGetAllRecomendRecipesForJson;
+						var html=createDomHtml(sectionMenuTplt,json);
+						if(!!fn)
+							fn(html);
+					}
+					function sendSelectRecipeTypes(parseDataFn){
+						if(!!$.data_sendSelectRecipeTypes){
+							parseDataFn($.data_sendSelectRecipeTypes);
+						}else{
+							$.ajax({
+								type:"get",
+								url:"xml/GetAllSubClass.xml",
+								data:"url="+encodeURIComponent("GetAllSubClass/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId)+"&method=get",
+								//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetAllSubClass/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId,
+								//url:"xml/recipeType.xml",
+								dataType:"text",
+								success:function(str){
+									$.data_sendSelectRecipeTypes=str;
+									parseDataFn(str);
+								},
+								error:function(){
+									$.alt("操作失败!");
+								}
+							});
+						}
+					}
+					function sendSelectRecipeInfo(parseDataFn){
+						if(!!$.data_sendSelectRecipeInfo&&false){
+							parseDataFn($.data_sendSelectRecipeInfo);
+						}else{
+							$.ajax({
+								type:"get",
+								url:"xml/GetRecipeInfo.xml",
+								data:"url="+encodeURIComponent("GetRecipeInfo/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId)+"&method=get",
+								//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetRecipeInfo/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId,
+								//url:"xml/recipe.xml",
+								dataType:"text",
+								success:function(str){
+									$.data_sendSelectRecipeInfo=str;
+									parseDataFn(str);
+								},
+								error:function(){
+									$.alt("操作失败!");
+								}
+							});
+						}
+					}
+					function sendGetAllRecomendRecipes(parseDataFn){
+						if(!!$.data_sendGetAllRecomendRecipes&&false){
+							parseDataFn($.data_sendGetAllRecomendRecipes);
+						}else{
+							$.ajax({
+								type:"get",
+								url:"xml/GetAllRecomendRecipes.xml",
+								data:"url="+encodeURIComponent("GetAllRecomendRecipes/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId)+"&method=get",
+								//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetAllRecomendRecipes/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId,
+								//url:"xml/tuijian.xml",
+								dataType:"text",
+								success:function(str){
+									$.data_sendGetAllRecomendRecipes=str;
+									parseDataFn(str);
+								},
+								error:function(){
+									$.alt("操作失败!");
+								}
+							});
+						}
+					}
+					function sendSerchRecipes(val,parseDataFn){
+						var json=$.data_sendSelectRecipeInfoForJson;
+						var serchRecipesJson={};
+						for(var i in json){
+							for(var j in json[i]){
+								var obj=json[i][j];
+								if(obj.recipeHeaderSoundSequence.indexOf(val)>-1)
+									serchRecipesJson[obj.recipeId]=obj;
+							}
+						}
+						parseDataFn(serchRecipesJson);
+//						var xml=$($.data_sendSelectRecipeInfo);
+//						xml.find("dsRecipes>Recipes").each(function(){
+//							var key=$(this).children("Recipe_HeaderSoundSequence").text();
+//							if(key.indexOf(val)==-1)
+//								$(this).remove();
+//						});
+//						parseDataFn(xml[0].outerHTML);
+						
+						
+//						$.ajax({
+//							type:"get",
+//							url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/SerchRecipes/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId+","+val,
+//							//url:"xml/tuijian.xml",
+//							dataType:"text",
+//							success:function(str){
+//								parseDataFn(str);
+//							},
+//							error:function(){
+//								$.alt("操作失败!");
+//							}
+//						});
+					}
+					if($.isAndroid)
+						$.myScroll.destroy();
 				}
 			</script>
 			
 		</div>
-		<nav class="navMenu">
-			<h3>魏家凉皮</h3>
-			<p>&emsp;&emsp;凉皮在陕西人的眼里有着举足轻重的地位，并被列为西安非物质文化遗产，是陕西特色小吃的典型代表。在当今市场中，地方特色小吃发展迅速。本文以陕西特色快餐第一品牌——魏家凉皮为研究对象，通过梳理西安华荣魏家餐饮管理有限公司现状，回顾魏家凉皮的发展之路，探索魏家凉皮的成功之路。</p>
-			<ul>
-				<!--<li>全部<span class="glyphicon glyphicon-menu-right"></span></li>
-				<li>凉皮<span class="glyphicon glyphicon-menu-right"></span></li>
-				<li>汉堡<span class="glyphicon glyphicon-menu-right"></span></li>
-				<li>汤类<span class="glyphicon glyphicon-menu-right"></span></li>
-				<li>小吃<span class="glyphicon glyphicon-menu-right"></span></li>-->
+		<nav class="menuNavMenu">
+			<h3>菜单类目</h3>
+			<div class="myScrollMenu">
+				<ul>
 				
-			</ul>
+				</ul>
+			</div>
+			<div>
+				<a href="#historicalOrder.html" class="menuHide"><span class="glyphicon glyphicon-glass"></span>已点</a>
+<!--				<a class="toBack menuHide"><span class="glyphicon glyphicon-home"></span>主页</a>-->
+			</div>
 		</nav>
 		<aside></aside>
 		<script>
 			//$(".loading").hide();
-			var timer=window.setInterval(function(){
-				if(!isInitLoad&&isInitLoadData){
-					clearInterval(timer);
-					$.init();
-				}
-			},100);
+//			var timer=window.setInterval(function(){
+//				if(!isInitLoad&&isInitLoadData){
+//					clearInterval(timer);
+//					$.init();
+//				}
+//			},100);
 		</script>
 		<!--<a class="loading"></a>-->
 	</body>
+	<foot>
+		<div class="confirmBox">
+			<div>
+				<span></span>
+				<span></span>
+				<div>
+					<span>是</span>
+					<span>否</span>
+				</div>
+			</div>
+		</div>
+		<div class="confirmBoxInput">
+			<div>
+				<span></span>
+				<span></span>
+				<input type="text" placeholder="" />
+				<div>
+					<span>是</span>
+					<span>否</span>
+				</div>
+			</div>
+		</div>
+		<div class="confirmBoxOK">
+			<div>
+				<span></span>
+				<span></span>
+				<div>
+					<span>是</span>
+				</div>
+			</div>
+		</div>
+	</foot>
 </html>

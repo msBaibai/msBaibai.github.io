@@ -10,238 +10,519 @@
 	<body>
 		<div>
 			<style>
-				body{
-					background-color: rgba(185, 185, 185, 0.19);
-				}
-				.sectionConfirm{
-					margin-top: 3px;
-				}
-				.sectionConfirm>ul:nth-of-type(1){
-					margin: 0;
-					padding: 0;
+				.indexCheckedRoom{
 					width: 100%;
-					overflow-x: hidden;
-					list-style: none;
-					border-top: 1px rgba(138, 137, 137, 0.14) solid;
-				}
-				.sectionConfirm>ul:nth-of-type(1)>li{
-					width: 100%;
-					height: 42px;
-					margin-bottom: 1px;
-					position: relative;
-					background-color: #FFFFFF;
-					border-bottom: 1px rgba(138, 137, 137, 0.14) solid;
-					font-size: 15px;
-					line-height: 42px;
-					padding-left: 4%;
-				}
-				.sectionConfirm>ul:nth-of-type(1)>li>span{
+					height: 100vh;
+					background-color: #E4E4E4;
 					position: absolute;
-					right: 12px;
+					transition: -webkit-transform .25s;
+					-webkit-transition: -webkit-transform .25s;
+					transform: translateY(100%);
+					-webkit-transform: translateY(100%);
+					left: 0px;
+					top: 0px;
+					z-index: 9;
+				}
+				.indexCheckedRoom.show{
+					-webkit-transform: translateY(0%);
+				}
+				.indexCheckedRoom>div{
+					width: 100%;
+					height: calc( 100% - 44px);
+					position: relative;
+					overflow: hidden;
+				}
+				.indexCheckedRoom>div>nav{
+					width: 100%;
+					height: auto;
+					position: absolute;
+				}
+				.indexCheckedRoom>div>nav>ul{
+					width: 100%;
+				}
+				.indexCheckedRoom>div>nav>ul>li{
+					width: 30%;
+					height: 40px;
+					background-color: #FFFFFF;
+					border: 1px rgba(0, 0, 0, 0.14) solid;
+					border-radius: 5px;
+					font-size: 16px;
+					line-height: 40px;
+					text-align: center;
+					display: inline-block;
+					box-sizing: border-box;
+					margin-bottom: 8px;
+					cursor: pointer;
+					color: #949494;
+				}
+				.indexCheckedRoom>div>nav>ul>li:active{
+					background-color: #E8E8E8;
+				}
+				.indexCheckedRoom>div>nav>ul>li:nth-of-type(3n+1){
+					margin-left: 2.5%;
+				}
+				.indexCheckedRoom>div>nav>ul>li:nth-of-type(3n+2){
+					margin-left: 2.5%;
+					margin-right: 2.5%;
+				}
+				.indexCheckedRoom>div>nav>ul>li:nth-of-type(3n+3){
+					margin-right: 2.5%;
+				}
+			
+			
+				.sectionConfirm{
+					width: 100%;
+					height: calc( 100% - 47px );
+					margin-top: 3px;
+					overflow:auto;
+					position: relative;
+					perspective: 500px;
+					-webkit-perspective: 500px;
+					backface-visibility: hidden;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
+				}
+				.sectionConfirm>div{
+					width: 100%;
+					height: auto;
+					position: absolute;
+					backface-visibility: hidden;
+					-webkit-transform:translate3d(0,0,0);
+					transform:translate3d(0,0,0);
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li{
+					transition: transform 0.25s;
+					-webkit-transition: -webkit-transform 0.25s;
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li>b{
+					padding: 3px 6px 3px 6px;
+					color: #FFFFFF;
+					background-color: #D25050;
+					border-radius: 8px;
+					font-size: 12px;
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li>span:nth-of-type(1){
+					position: absolute;
+					right: 32px;
 					color: #8A8989;
 					letter-spacing: 3px;
 				}
-				.sectionConfirm>label{
-					width: auto;
-					display: block;
-					font-size: 14px;
-					margin-left: 13px;
-					color: #717171;
-					line-height: 38px;
-				}
-				.sectionConfirm>ul:nth-of-type(2){
-					margin: 0;
-					padding: 0px 8px;
-					width: 100%;
-					overflow-x: hidden;
-					list-style: none;
-					text-align: center;
-				}
-				.sectionConfirm>ul:nth-of-type(2)>li{
-					display: inline;
-					padding: 8px 15px;
-					background-color: #FFFFFF;
-					font-size: 20px;
-					margin: 8px 8px;
-					color: #999999;
-					box-shadow: 0px 0px 2px #333333;
-					border-radius: 3px;
-					cursor: pointer;
-					line-height: 50px;
-				}
-				.sectionConfirm>ul:nth-of-type(2)>li.active{
-					background-color: #337AB7;
+				.sectionConfirm>div>ul:nth-of-type(1)>li>button.heart{
+					width: 50px;
+					height: 100%;
+					box-sizing: border-box;
+					border: none;
+					background-color: #E8AC25;
 					color: #FFFFFF;
-					box-shadow: inset 0px 0px 2px #405D75;
-				}
-				.confirmBox{
-					width: 100vw;
-					height: 100vh;
-					position: fixed;
-					top: -3000px;
-					margin: 0;
-					padding: 0;
-					background-color: rgba(0,0,0,0.3);
-					transition: top 0s 0.125s;
-					-webkit-transition: top 0s 0.125s;
-				}
-				.confirmBox>div{
 					position: absolute;
-					width: 260px;
-					height: auto;
-					top: 35%;
-					left: 50%;
-					margin: -10vh 0 0 -130px;
-					background-color: #FFFFFF;
-					border-radius: 10px;
-					opacity: 0;
-					-webkit-transform: scale(1.15,1.15);
-					transition: opacity 0.125s,-webkit-transform 0.125s;
-					-webkit-transition: opacity 0.125s,-webkit-transform 0.125s;
-				}
-				.confirmBox>div>span:nth-of-type(1){
-					width: 100%;
-					display: block;
-					text-align: center;
-					line-height: 30px;
-					font-size: 16px;
-					font-weight: bold;
-					margin-top: 5px;
-					color:#000000;
-				}
-				.confirmBox>div>span:nth-of-type(2){
-					width: 100%;
-					display: block;
-					text-align: center;
-					line-height: 22px;
-					padding-left: 40px;
-					padding-right: 40px;
-					margin-bottom: 10px;
-					font-size: 13px;
-					color: #333333;
-				}
-				.confirmBox>div>div{
-					width: 100%;
-					height: 40px;
-					border-top: 1px rgba(115, 115, 115, 0.38) solid;
-					cursor: pointer;
-				}
-				.confirmBox>div>div>span:nth-of-type(1){
-					width: 50%;
-					height: 40px;
-					display: inline-block;
-					font-size: 15px;
-					line-height: 40px;
-					text-align: center;
-					border-bottom-left-radius: 10px;
-					box-sizing: border-box;
-					font-weight: 400;
-					border-right: 1px rgba(115, 115, 115, 0.38) solid;
-					background-color: #FFFFFF;
-					color:#2E6BB3;
-				}
-				.confirmBox>div>div>span:nth-of-type(2){
-					width: 50%;
-					height: 40px;
-					display: inline-block;
-					font-size: 15px;
-					line-height: 40px;
-					text-align: center;
-					border-bottom-right-radius: 10px;
-					box-sizing: border-box;
-					font-weight: 400;
-					border-left: 1px rgba(0,0,0,0) solid;
-					background-color: #FFFFFF;
-					color:#2E6BB3;
-				}
-				.confirmBox>div>div>span:nth-of-type(1):active{
-					background-color: rgb(240, 240, 240);
-				}
-				.confirmBox>div>div>span:nth-of-type(2):active{
-					background-color: rgb(240, 240, 240);
-				}
-				
-				.confirmBox.show{
+					right: -50px;
+					outline: none;
 					top: 0px;
-					transition: none;
-					-webkit-transition: none;
 				}
-				.confirmBox.show>div{
-					opacity: 1;
-					-webkit-transform: scale(1,1);
+				.sectionConfirm>div>ul:nth-of-type(1)>li>button.option{
+					width: 50px;
+					height: 100%;
+					box-sizing: border-box;
+					border: none;
+					background-color: #2FC53A;
+					color: #FFFFFF;
+					position: absolute;
+					right: -50px;
+					outline: none;
+					top: 0px;
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li>button.update{
+					width: 50px;
+					height: 100%;
+					box-sizing: border-box;
+					border: none;
+					background-color: #2CA9C3;
+					color: #FFFFFF;
+					position: absolute;
+					right: -100px;
+					outline: none;
+					top: 0px;
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li>button.delete{
+					width: 50px;
+					height: 100%;
+					box-sizing: border-box;
+					border: none;
+					background-color: #E05841;
+					color: #FFFFFF;
+					position: absolute;
+					right: -150px;
+					outline: none;
+					top: 0px;
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li.active{
+					transform: translateX(-150px);
+					-webkit-transform: translateX(-150px);
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li>span:nth-of-type(2){
+					position: absolute;
+					right: 12px;
+					color: #8A8989;
+					line-height: 41px;
+				}
+				.sectionConfirm>div>ul:nth-of-type(1)>li:last-child>span{
+					right: 12px;
+					letter-spacing: 1px;
+				    color: #CA5A6E;
+				}
+				.sectionConfirm>div>ul:nth-of-type(2)>li>span{
+					position: absolute;
+					right: 12px;
+					color: #8A8989;
+					line-height: 41px;
+				}
+				.sectionConfirm>div>ul:nth-of-type(2)>li:active{
+					background-color: #CCCCCC;
+				}
+				.sectionConfirm>.sectionConfirmDiv>.list:nth-of-type(1)>li{
+					height: 52px;
+					font-size: 18px;
+					line-height: 52px;
+				}
+				.sectionConfirm>.sectionConfirmDiv>.list:nth-of-type(1)>li>span:nth-of-type(2){
+					line-height: 52px;
+				}
+				.sectionConfirm>.sectionConfirmDiv>label {
+				    line-height: 43px;
 				}
 				
+				.sectionConfirm>.sectionConfirmDiv>.confirmSubmit,.sectionConfirm>.sectionConfirmDiv>.checkRoomInlineBtn{
+		            width: 100%;
+				    height: 42px;
+				    position: relative;
+				    border-top: 1px rgba(138, 137, 137, 0.2) solid;
+				    border-bottom: 1px rgba(138, 137, 137, 0.2) solid;
+				    border-right: none;
+				    border-left: none;
+				    font-size: 15px;
+				    line-height: 42px;
+				    padding: 0;
+				    background-color: #ffffff;
+				    transition: background-color 0.25s;
+				    -webkit-transition: background-color 0.25s;
+				    cursor: pointer;
+				    backface-visibility: hidden;
+				    -webkit-transform: translate3d(0,0,0);
+				    transform: translate3d(0,0,0);
+				    outline: none;
+				    text-align: left;
+				    color: rgb(51, 51, 51);
+				    padding-left: 4%;
+				}
+				.sectionConfirm>.sectionConfirmDiv>.confirmSubmit:active,.sectionConfirm>.sectionConfirmDiv>.checkRoomInlineBtn:active{
+					background-color: #EEEEEE;
+				}
+				.sectionConfirm>.sectionConfirmDiv>.confirmSubmit{
+					margin-top: 40px;
+					text-align: center;
+					color: #208AFE;
+					font-weight: bold;
+					padding-left: 0%;
+				}
+				.sectionConfirm>div>.checkRoomInlineBtn>span{
+					font-size: 20px;
+					color: #337AB7;
+					display: inline-block;
+					position: absolute;
+					right: 10px;
+				}
 			</style>
 			<header class="header">
 				<h4>订单确认</h4>
-				<a href="#menu.html"><span class="glyphicon glyphicon-chevron-left"></span></a>
-				<a class="confirmSubmit"><span class="glyphicon glyphicon-ok"></span></a>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
 			</header>
 			<section class="sectionConfirm">
-				<label>请确认您所点的餐品:</label>
-				<ul>
-				</ul>
-				<label>请选择您当前的餐位:</label>
-				<ul>
-					<li>01</li>
-					<li>02</li>
-					<li>03</li>
-					<li>04</li>
-					<li>05</li>
-					<li>06</li>
-					<li>07</li>
-					<li>08</li>
-					<li>09</li>
-					<li>10</li>
-					<li>11</li>
-					<li>12</li>
-					<li>外送</li>
-				</ul>
-			</section>
-			<div class="confirmBox">
-				<div>
-					<span>订单确认</span>
-					<span>是否确认提交？</span>
-					<div>
-						<span>是</span>
-						<span>否</span>
-					</div>
+				<div class="sectionConfirmDiv">
+					<label class="titleLabel">请确认您所点的餐品:</label>
+					<ul class="list">
+					</ul>
+					<label class="titleLabel">请选择您当前的房间:</label>
+					<button class="checkRoomInlineBtn">当前房间:<span></span></button>
+					<button class="confirmSubmit">下单</button>
 				</div>
-			</div>
+			</section>
 			<script>
 				$.init=function(){
-					var liClickActive=function(){
-						$(".sectionConfirm>ul:eq(1)>li.active").removeClass("active");
-						$(this).addClass("active");
+					var liClickActiveUl1=function(){
+						$.dataConfirmCheckedAreaId=$(this).attr("no");
+						window.location.href="#checkedRoom.html";
 					}
-					var confirmBoxShow=function(){
-						$(".confirmBox").addClass("show");
+					var toHrefRemarks=function(){
+						$.dataConfirmCheckedRecipeInfoId=$(this).attr("foodId");
+						window.location.href="#remarks.html";
 					}
-					var confirmBoxHide=function(){
-						$(".confirmBox").removeClass("show");
+					var toHrefTaoCan=function(){
+						$.dataConfirmCheckedRecipeInfoId=$(this).attr("foodId");
+						$.dataConfirmCheckedRecipeTaoCanNum=$(this).children("span:eq(0)").children("b:eq(1)").html();
+						window.location.href="#packageDetails.html";
 					}
-					var confirmBoxOK=function(){
-						window.location.hash="payment.html";
+					$.tap(".sectionConfirm>div>ul:eq(0)>li[foodId]",function(e){
+						e.stopPropagation();
+						var bol=$(this).hasClass("active");
+						$(".sectionConfirm>div>ul:eq(0)>li.active").removeClass("active");
+						if(!bol)
+							$(this).addClass("active");
+					});
+					$.tap(".sectionConfirm>div>ul:eq(0)>li>button.heart",function(e){
+						e.stopPropagation();
+						toHrefRemarks.call($(this).parent()[0]);
+					});
+					$.tap(".sectionConfirm>div>ul:eq(0)>li>button.option",function(e){
+						e.stopPropagation();
+						toHrefTaoCan.call($(this).parent()[0]);
+					});
+					$.tap(".sectionConfirm>div>ul:eq(0)>li>button.update",function(e){
+						e.stopPropagation();
+						var li=$(this).parent();
+						var foodId=li.attr("foodId");
+						$.createConfirmBoxInputNumber({"title":"修改数量","content":"请输入"+li.attr("foodName")+"数量","placeholder":"当前数量:"+li.children("span").first().children("b:eq(1)").html(),"click":function(){
+							var num=$(".confirmBoxInputNumber>div>input").val();
+							$(".confirmBoxInputNumber>div>input").val("");
+							if(/^[0-9]+$/.test(num)){
+								if(parseInt(num)<100){
+									$.getMenuData(foodId).num=num;
+									if(!!$.getMenuData(foodId).children)
+										$.getMenuData(foodId).children="";
+									$.getMenuData(foodId).isChecked=0;
+									li.prepend("<b>未选子项</b>");
+									$.saveMenuData();
+									loadListAndGetTotal();
+								}else{
+									$.altAuto("数量过大");
+								}
+							}else{
+								$.altAuto("输入不正确");
+							}
+						}});
+					});
+					$.tap(".sectionConfirm>div>ul:eq(0)>li>button.delete",function(e){
+						e.stopPropagation();
+						var li=$(this).parent();
+						$.createConfirmBox({"title":"系统提示","content":"是否确认删除？","click":function(){
+							$.menuDataDelete(li.attr("foodId"));
+							li.remove();
+							loadListAndGetTotal();
+						}});
+					});
+//					选择房间
+//					$.tap(".sectionConfirm>div>ul:eq(1)>li",liClickActiveUl1);
+					$.tap(".confirmSubmit",function(){
+						if($.getJsonLength()==0){
+							$.createConfirmBoxOK({"title":"系统提示","content":"订单内容不可为空"});
+							return;
+						}
+						var bol=true;
+						$(".sectionConfirm>div>ul:eq(0)>li[isoptional='1']").each(function(){
+							var id=$(this).attr("foodId");
+							if($.getMenuData(id).isChecked=="0")
+								bol=false;
+						});
+						if(!!bol){
+							$.createConfirmBox({"title":"订单确认","content":"是否确认提交？","click":function(){
+								$.initOpenPage();
+								$.timer=window.setTimeout(function(){
+									window.location.href="#payment.html";
+								},100);
+							}});
+						}else{
+							$.createConfirmBoxOK({"title":"系统提示","content":"有套餐未选子项"});
+						}
+						
+					});
+					$.myScroll = new IScroll(".sectionConfirm");
+					loadListAndGetTotal();
+					$(".indexCheckedRoomDiv>nav").html($.data_indexCheckedRoomDivNavHTML);
+					$.myScroll_indexCheckedRoomDiv = new IScroll(".indexCheckedRoomDiv");
+					$.tap(".sectionConfirm>div>.checkRoomInlineBtn",function(){
+						$(".indexCheckedRoom").addClass("show");
+						var hash=window.location.hash;
+						$(window).off("hashchange").on("hashchange",function(){
+							window.location.hash=hash;
+							if($(".indexCheckedRoom").hasClass("show")){
+								$(".indexCheckedRoom").removeClass("show");
+								window.setTimeout(function(){
+									$.initOpenPage();
+								},100);
+							}else{
+								$.initOpenPage();
+							}
+						});
+						$(".indexCheckedRoomDiv>nav li[roomState!='3']").remove();
+					});
+					$.tap(".closeCheckedRoom",function(){
+						$(".indexCheckedRoom").removeClass("show");
+						window.setTimeout(function(){
+							$.initOpenPage();
+						},100);
+					});
+					$.tap(".indexCheckedRoom>div>nav>ul>li",function(){
+						$.dataConfirmCheckedAreaId=$(this).parent().prev().attr("areaId");
+						$.dataConfirmCheckedAreaName=$(this).parent().prev().html();
+						$.dataConfirmCheckedRoomId=$(this).attr("roomId");
+						$.dataConfirmCheckedRoomName=$(this).html();
+						$.dataConfirmCheckedRoomIP=$(this).attr("roomIp");
+						$(".sectionConfirm>div>.checkRoomInlineBtn>span").html($.dataConfirmCheckedRoomName);
+						$(".indexCheckedRoom").removeClass("show");
+					});
+//					选择房间
+//					sendSelectAreaList(function(str){
+//						$.dataAreaInfo=str;
+//						$(".sectionConfirm>div>ul:eq(1)").html(parseAreaData());
+//						$.myScroll.refresh();
+//						sendSelectRooms(function(str){
+//							$.roomsData=str;
+//						});
+//					});
+					$(".sectionConfirm>div>.checkRoomInlineBtn>span").html($.dataConfirmCheckedRoomName);
+					
+				
+					function checkTaoCanIsOk(){
+						$.data_confirmTaoCanDetails={};
+						$.menuDataSetList(function(valJson,i){
+							if(valJson.isTaoCan=="1"){
+								sendSelectTaoCanDetails(i,function(str,id){
+									var li=$(".sectionConfirm>div>ul:eq(0)>li[foodId='"+id+"']");
+									if(li.length>0){
+										$.data_confirmTaoCanDetails[id]=str;
+										addFixedFoodNumToJson(str,li);
+									}
+								});
+							}
+						});
 					}
-					$.tap(".sectionConfirm>ul:eq(1)>li",liClickActive);
-					$.tap(".confirmSubmit",confirmBoxShow);
-					$.tap(".confirmBox>div>div>span:eq(1)",confirmBoxHide);
-					$.tap(".confirmBox>div>div>span:eq(0)",confirmBoxOK);
-					var sectionConfirmUlList="";
-					var total=0;
-					for(var i in menuData){
-						var valJson=menuData[i];
-						if(valJson.num>0){
+					function addFixedFoodNumToJson(str,li){
+						var valJson=$.getMenuData(li.attr("foodId"));
+						var childrens={};
+						if(!!valJson.children)
+							childrens=valJson.children["0"];
+						else
+							valJson.children={};
+						$(str).find("DocumentElement>TaoCanDetails").each(function(){
+							if($(this).children("RecipeGroup_ID").text()=="0"){
+								childrens[$(this).children("Recipe_ID").text()]=$.createValJson($(this).children("TaoCan_OrderQuantity").text(),$(this).children("Recipe_Name").text(),parseFloat($(this).children("Recipe_UnitPrice").text()).toFixed(2),0,8,$(this).children("RecipeGroup_ID").text());
+							}else{
+								if(!valJson.isChecked){
+									valJson.isChecked=0;
+									if(li.children("b").length==0)
+										li.prepend("<b>未选子项</b>");
+								}
+								li.attr("isOptional","1");
+							}
+						});
+						valJson.children["0"]=childrens;
+						$.saveMenuData();
+					}
+					
+					
+					function loadListAndGetTotal(){
+						var sectionConfirmUlList="";
+						var total=0;
+						$.menuDataSetList(function(valJson,i){
 							total+=valJson.price*valJson.num;
-							sectionConfirmUlList+="<li>"+valJson.name+"<span>&yen;<b>"+valJson.price+"</b>&times;<b>"+valJson.num+"</b></span></li>";
+							if(valJson.isTaoCan=="0")
+								sectionConfirmUlList+="<li foodId=\""+i+"\" foodName=\""+valJson.name+"\" isTaoCan=\""+valJson.isTaoCan+"\">"+valJson.name+"<span>&yen;<b>"+valJson.price+"</b>&times;<b>"+valJson.num+"</b></span><span class=\"glyphicon glyphicon-menu-right\"></span><button class=\"heart\"><span class=\"glyphicon glyphicon-heart\"></span></button><button class=\"update\"><span class=\"glyphicon glyphicon-edit\"></span></button><button class=\"delete\"><span class=\"glyphicon glyphicon-trash\"></span></button></li>";
+							else
+								sectionConfirmUlList+="<li foodId=\""+i+"\" foodName=\""+valJson.name+"\" isTaoCan=\""+valJson.isTaoCan+"\">"+valJson.name+"<span>&yen;<b>"+valJson.price+"</b>&times;<b>"+valJson.num+"</b></span><span class=\"glyphicon glyphicon-menu-right\"></span><button class=\"option\"><span class=\"glyphicon glyphicon-list-alt\"></span></button><button class=\"update\"><span class=\"glyphicon glyphicon-edit\"></span></button><button class=\"delete\"><span class=\"glyphicon glyphicon-trash\"></span></button></li>";
+						});
+						sectionConfirmUlList+="<li>总计:<span>&yen;<b>"+total+"</b></span></li>";
+						$.confirmTotal=total;
+						$(".sectionConfirm>div>ul:eq(0)").html(sectionConfirmUlList);
+						$.myScroll.refresh();
+						checkTaoCanIsOk();
+					}
+					
+					
+					function parseAreaData(){
+						var html="";
+						$($.dataAreaInfo).find("NewDataSet>RoomArea").each(function(){
+							var area={};
+							area.id=$(this).children("RoomArea_ID").text();
+							area.name=$(this).children("RoomArea_Name").text();
+							html+=returnStringForSectionConfirmUlLi(area);
+						});
+						return html;
+					}
+					function sendSelectAreaList(parseDataFn){
+						if(!!$.data_sendSelectAreaList){
+							parseDataFn($.data_sendSelectAreaList);
+						}else{
+							$.ajax({
+								type:"get",
+								//url:"xml/area.xml",
+								url:"xml/GetRoomArea.xml",
+								data:"url="+encodeURIComponent("GetRoomArea")+"&method=get",
+								//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetRoomArea",
+								dataType:"text",
+								success:function(str){
+									$.data_sendSelectAreaList=str;
+									parseDataFn(str);
+								},
+								error:function(){
+									$.alt("操作失败!");
+								}
+							});
 						}
 					}
-					sectionConfirmUlList+="<li>总计:<span>&yen;<b>"+total+"</b></span></li>";
-					$.confirmTotal=total;
-					$(".sectionConfirm>ul:eq(0)").html(sectionConfirmUlList);
+					function sendSelectRooms(parseDataFn){
+						if(!!$.data_sendSelectRooms){
+							parseDataFn($.data_sendSelectRooms);
+						}else{
+							$.ajax({
+								type:"get",
+								//url:"xml/rooms.xml",
+								url:"xml/GetRoomInfoDetail.xml",
+								data:"url="+encodeURIComponent("GetRoomInfoDetail/"+$.data_currentUserId)+"&method=get",
+								//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetRoomInfoDetail/"+$.data_currentUserId,
+								dataType:"text",
+								success:function(str){
+									$.data_sendSelectRooms=str;
+									parseDataFn(str);
+								},
+								error:function(){
+									$.alt("操作失败!");
+								}
+							});
+						}
+					}
+					function sendSelectTaoCanDetails(id,parseDataFn){
+						$.ajax({
+							type:"get",
+							//url:"xml/taoCanDetails.xml",
+							url:"xml/GetAllSetmealDetails.xml",
+							data:"url="+encodeURIComponent("GetAllSetmealDetails/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId+","+id)+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetAllSetmealDetails/"+$.dataConfirmCheckedAreaId+","+$.dataConfirmCheckedRoomId+","+id,
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str,id);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function returnStringForSectionConfirmUlLi(obj){
+						return "<li no=\""+obj.id+"\">"+obj.name+"<span class=\"glyphicon glyphicon-menu-right\"></span></li>";
+					}
+					if($.isAndroid)
+						$.myScroll.destroy();
 				}
 			</script>
 		</div>
-		
+		<div class="indexCheckedRoom">
+			<header class="header">
+				<h4>选择房间</h4>
+				<a class="closeCheckedRoom"><span class="glyphicon glyphicon-remove"></span></a>
+			</header>
+			<div class="indexCheckedRoomDiv">
+				<nav>
+					
+				</nav>
+			</div>
+		</div>
 	</body>
 </html>

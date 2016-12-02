@@ -1,0 +1,1 @@
+(function(a){var b=[];a.initWebSource=function(b,c){};a.closeWebSource=function(){for(var a in b){var c=b[a];c&&(c.close(),b[a]=null)}}})($);

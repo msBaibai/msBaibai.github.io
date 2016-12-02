@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>开台</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.sectionOpenRoom{
+					margin-top: 3px;
+					height: calc(100% - 47px);
+					position: relative;
+					overflow-y: hidden;
+				}
+				.sectionOpenRoom>div{
+					width: 100%;
+					position: absolute;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>span{
+					position: absolute;
+				    right: 13px;
+				    font-size: 16px;
+				    color: #616161;
+				    top: 16px;
+				    pointer-events: none;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>b{
+					position: absolute;
+				    right: 12px;
+				    color: #868686;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>input{
+					text-align: right;
+					right: 10px;
+					//pointer-events: none;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>select{
+					text-align: right;
+					text-align-last: right;
+					right: 10px;
+					padding-right: 25px;
+					direction: rtl;
+					background-color:transparent;
+					width: 94%;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(2)>li>input{
+					position: absolute;
+				    display: block;
+			        right: 38px;
+    				top: 35px;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>b.colorRed{
+					color: #E05555;
+				}
+				.editNum{
+					width: 42px;
+					height: 48px;
+					position: absolute;
+					right: 0px;
+					top: 0px;
+					text-align: center;
+					line-height: 48px;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>input.forEditNum{
+					right: 35px;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>select.selectNone{
+					position: fixed;
+					right: 10px;
+    				opacity: 0;
+				}
+				.sectionOpenRoom>div>ul:nth-of-type(1)>li>span+b {
+				    right: 30px;
+				}
+				.loadBtn::after{
+					content: "请先选择支付方式";
+				}
+			</style>
+			<header class="header">
+				<h4>开台</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+			</header>
+			<section class="sectionOpenRoom">
+				<div>
+					<label class="titleLabel">请填写开台信息：</label>
+					<ul class="list">
+						<li>
+							房间名称
+							<b></b>
+						</li>
+						<li>
+							房台计费方式
+							<select class="listSelect roomChargeType">
+							</select>
+							<span class="glyphicon glyphicon-chevron-down"></span>
+						</li>
+						<li>
+							酒水计费方式
+							<select class="listSelect drinkChargeType">
+							</select>
+							<span class="glyphicon glyphicon-chevron-down"></span>
+						</li>
+						<li>
+							开台时间
+							<b>加载中...</b>
+						</li>
+						<li>
+							时长
+							<input readonly="readonly" class="listInput forEditNum" type="text"  placeholder="请选择或输入时间" />
+							<select class="listSelect selectNone">
+								<option value="60">1小时</option>
+								<option value="120">2小时</option>
+								<option value="180">3小时</option>
+								<option value="240">4小时</option>
+								<option value="300">5小时</option>
+							</select>
+							<div class="editNum">
+								<span class="glyphicon glyphicon-edit"></span>
+							</div>
+						</li>
+						<li>
+							人数
+							<input readonly="readonly" class="listInput" type="text" placeholder="请输入人数" />
+						</li>
+						<li class="hrefTo" href="#checkedReserve.html">
+							预定
+							<span class="glyphicon glyphicon-menu-right"></span>
+							<b>无</b>
+						</li>
+						<li>
+							应收
+							<b class="colorRed">&yen;0</b>
+						</li>
+					</ul>
+					<label class="titleLabel">请选择支付方式：</label>
+					<ul class="listRadius">
+						<li typeId="100">支付宝<input class="radio" name="payType" type="radio" /> </li>
+						<li typeId="1000">微信支付<input class="radio" name="payType" type="radio" /></li>
+					</ul>
+					<button class="payButton loadBtn"></button>
+				</div>
+			</section>
+			<script>
+				$.init=function(){
+					$(".sectionOpenRoom").off("touchstart").on("touchstart",function(e){
+						try{event.returnValue = true;}catch(e){}
+					});
+					
+					$.data_OLBusiness="";
+					$.data_ftRecipe_Fee=0;
+					$.myScroll = new IScroll(".sectionOpenRoom");
+					$(".sectionOpenRoom>div>ul:eq(0)>li:eq(0)>b").html($.dataConfirmCheckedRoomName);
+					$.tap(".sectionOpenRoom>div>ul:eq(1)>li",function(){
+						$(this).children("input")[0].checked=true;
+						$(".sectionOpenRoom>div>button").removeClass("loadBtn").html("生成收款二维码");
+					});
+					$.tap(".sectionOpenRoom>div>ul>li:eq(5)",function(){
+						var _this=$(this).children("input");
+						$.createConfirmBoxInputNumber({"title":"人数","content":"请输入人数","placeholder":"建议5-10人","click":function(){
+							var num=$(".confirmBoxInputNumber>div>input").val();
+							$(".confirmBoxInputNumber>div>input").val("");
+							if(/^[0-9]+$/.test(num)){
+								if(parseInt(num)<=100){
+									_this.val(num+"人");
+									GetReceiveMondy();
+								}else{
+									$.altAuto("人数过多,不得大于100人");
+								}
+							}else{
+								$.altAuto("输入不正确");
+							}
+						}});
+					});
+					$(".sectionOpenRoom>div>ul:eq(0)>li:eq(2)>select").on("change",function(){
+						GetReceiveMondy();
+					});
+					var bolIsTimeNum=true;
+					$(".sectionOpenRoom>div>ul:eq(0)>li:eq(1)>select").on("change",function(){
+						if($(this).find("option[value='"+$(this).val()+"']").attr("type")=="0"){
+							$(".sectionOpenRoom>div>ul>li:eq(4)").hide();
+							bolIsTimeNum=false;
+						}else{
+							$(".sectionOpenRoom>div>ul>li:eq(4)").show();
+							bolIsTimeNum=true;
+						}
+						GetReceiveMondy();
+					});
+					var date=new Date();
+					var time=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes();
+					$(".sectionOpenRoom>div>ul>li:eq(3)>b").html(time);
+					
+					$.tap(".sectionOpenRoom>div>ul>li:eq(4)>.editNum",function(e){
+						e.stopPropagation();
+						var _this=$(this).prev().prev();
+						$.createConfirmBoxInputNumber({"title":"时长","content":"请输入时间","placeholder":"单位为（分钟）","click":function(){
+							var num=$(".confirmBoxInputNumber>div>input").val();
+							$(".confirmBoxInputNumber>div>input").val("");
+							if(/^[0-9]+$/.test(num)){
+								if(parseInt(num)<=360){
+									_this.val(num+"分钟");
+									GetReceiveMondy();
+								}else{
+									$.altAuto("时间最长为3小时（360分钟）");
+								}
+							}else{
+								$.altAuto("输入不正确");
+							}
+						}});
+					});
+					$(".sectionOpenRoom>div>ul:eq(0)>li:eq(4)>select").on("change",function(){
+						var input=$(this).prev();
+						var val=$(this).val();
+						input.val(val+"分钟");
+						GetReceiveMondy();
+					});
+					function returnALIpay3CreateData(){
+						return JSON.stringify({
+							"total_amount":"",
+							"paraBody": "在线点餐",
+						    "paraAttach": null,
+						    //"paraTotalFee": parseInt($.data_ftRecipe_Fee)*100,
+						    "paraTotalFee": 1,
+						    "paraBillCreateIp": null,
+						    "paraAuthCode": null,
+						    "paraOpenId": null,
+						    "paraAppId": null,
+						    "paraMchId": null,
+						    "paraSubMchId": null,
+						    "paraCertFileName": null,
+						    "paraPassword": null,
+						    "paraDeviceInfo":null,
+						    "paraTimeStart":null,
+						    "paraTimeExpire":null,
+						    "paraGoodsTag":null
+						});
+					}
+					function returnWXpay3CreateData(){
+						return JSON.stringify({
+							"out_trade_no":"0",
+							"paraBody": "在线点餐",
+						    "paraAttach": null,
+						    //"paraTotalFee": parseInt($.data_ftRecipe_Fee)*100,
+						    "paraTotalFee": 1,
+						    "paraBillCreateIp": null,
+						    "paraAuthCode": null,
+						    "paraAppId":null,
+						    "paraMchId":null,
+						    "paraOpenId":null,
+						    "paraSubMchId":null,
+						    "paraDeviceInfo":null,
+						    "paraTimeStart":null,
+						    "paraTimeExpire":null,
+						    "paraGoodsTag":null
+						});
+					}
+					function sendPay(urlName,op,ktvid,date,paytype,mark,other,product,coupon_send_id,action,data,erpid,time,sign,parseDataFn){
+						$.wxAndAli=paytype;
+						var cs="op="+op+"&ktvid="+79396+"&date="+date+"&paytype="+paytype+"&mark="+mark+"&other="+other+"&product="+product+"&coupon_send_id="+coupon_send_id+"&action="+action+"&erpid="+erpid+"&time="+time+"&sign="+sign+"&coupon_value=0";
+						//var url="https://pay.ktvsky.com/wx?"+cs;
+						//&data="+data
+						//url=encodeURIComponent(url);
+						$.ajax({
+							type:"get",
+							url:"json/WxPay.json",
+							//url:url,
+							//url:"http://localhost/Req/WxPay?url="+url,
+							dataType:"text",
+							data:"data="+data,
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendGetDogName(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/KtvInit.xml",
+							data:"url="+encodeURIComponent("KtvInit")+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/KtvInit",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					function sendInsertOLBusiness(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/InsertOLBusiness.xml",
+							data:"url="+encodeURIComponent("InsertOLBusiness/"+5+","+0.1+","+2+","+$.dataConfirmCheckedRoomId)+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/InsertOLBusiness/"+5+","+0.1+","+2+","+$.dataConfirmCheckedRoomId,
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("操作失败!");
+							}
+						});
+					}
+					sendInsertOLBusiness(function(str){
+						$.data_OLBusiness=$(str).text();
+					});
+					if(!$.data_ktvId){
+						sendGetDogName(function(str){
+							$.data_ktvId=$(str).find("DocumentElement>KtvInit>Ktvid").text();
+							$.data_dogName=$(str).find("DocumentElement>KtvInit>DogName").text();
+						});
+					}
+					
+					$.tap(".sectionOpenRoom>div>.payButton",function(){
+						var tm=$(".sectionOpenRoom>div>ul:eq(0)>li:eq(4)>input").val().replace(/[^0-9]/ig,"");
+						if(parseInt(tm)<parseInt($.openRoomMinTime)){
+							$.altAuto("时间过短,最少为"+$.openRoomMinTime+"分钟");
+							return;
+						}
+						$.payType=$(".listRadius>li>input:checked").parent().attr("typeId");
+						var date=new Date();
+						var time=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+						if($.payType=="100"){
+							$.createConfirmBoxOK({"title":"系统提示","content":"支付宝支付暂未开通"});
+//							sendPay("AliPay","fastpay",$.data_ktvId,time,"ALI",$.dataConfirmCheckedRoomId,"","1122334","","SWEEPCODE",returnALIpay3CreateData(),$.data_OLBusiness,date.getTime(),"",function(str){
+//								str=$.parseJSON(str);
+//								$.data_codeUrl=str.qr_code;
+//								$.data_outTradeNo=str.order;
+//								if(!!$.data_codeUrl)
+//									window.location.href="#showQRcode.html";
+//								else
+//									$.createConfirmBoxOK({"title":"系统提示","content":str.sub_msg});
+//							});
+						}else if($.payType=="1000")
+							sendPay("WxPay","fastpay",$.data_ktvId,time,"WX",$.dataConfirmCheckedRoomId,"","1122334","","SWEEPCODE",returnWXpay3CreateData(),$.data_OLBusiness,date.getTime(),"",function(str){
+								str=$.parseJSON(str);
+								$.data_codeUrl=str.code_url;
+								$.data_outTradeNo=str.order;
+								if(!!$.data_codeUrl)
+									window.location.href="#showQRcode.html";
+								else
+									$.createConfirmBoxOK({"title":"系统提示","content":str.sub_msg});
+							});
+					});
+					function sendloadDrinkAndRoomType(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/GetRoomAndRecipeRule.xml",
+							data:"url="+encodeURIComponent("GetRoomAndRecipeRule/"+$.dataConfirmCheckedRoomId)+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetRoomAndRecipeRule/"+$.dataConfirmCheckedRoomId,
+							dataType:"text",
+							success:function(str){
+								if(!!parseDataFn)
+									parseDataFn(str);
+							},
+							error:function(){
+								
+							}
+						});
+					}
+					function sendGetMinTime(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/GetBillIngDuration.xml",
+							data:"url="+encodeURIComponent("GetBillIngDuration")+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetBillIngDuration",
+							dataType:"text",
+							success:function(str){
+								if(!!parseDataFn)
+									parseDataFn(str);
+							},
+							error:function(){
+								
+							}
+						});
+					}
+					if(!$.openRoomMinTime)
+						sendGetMinTime(function(str){
+							$.openRoomMinTime=$(str).html();
+						});
+					sendloadDrinkAndRoomType(function(str){
+						var roomChargeType="";
+						$(str).find("RoomAndRecipesRul>RoomRule").each(function(){
+							roomChargeType+="<option type=\""+$(this).children("RoomFeeRule_Type").text()+"\" value=\""+$(this).children("RoomFeeRule_ID").text()+"\">"+$(this).children("RoomFeeRule_Name").text()+"</option>";
+						});
+						$(".roomChargeType").html(roomChargeType);
+						var drinkChargeType="";
+						$(str).find("RoomAndRecipesRul>RrecipeRule").each(function(){
+							drinkChargeType+="<option value=\""+$(this).children("Cost_RecipeFeeRuleID").text()+"\">"+$(this).children("RecipeFeeRule_Name").text()+"</option>";
+						});
+						$(".drinkChargeType").html(drinkChargeType);
+						
+						
+						if(!$.openRoomInfo||(!!$.openRoomInfo.roomId&&$.openRoomInfo.roomId!=$.dataConfirmCheckedRoomId)){
+							$.openRoomInfo={};
+							$(".sectionOpenRoom>div>ul:eq(0)>li:eq(4)>input").val("60分钟");
+						}else{
+							if(!!$.openRoomInfo.peopleNum)
+								$(".sectionOpenRoom>div>ul:eq(0)>li:eq(5)>input").val($.openRoomInfo.peopleNum+"人");
+							$(".roomChargeType").val($.openRoomInfo.roomChargeType);
+							$(".drinkChargeType").val($.openRoomInfo.drinkChargeType);
+							if(!!$.openRoomInfo.time)
+								$(".sectionOpenRoom>div>ul:eq(0)>li:eq(4)>input").val($.openRoomInfo.time+"分钟");
+							else
+								$(".sectionOpenRoom>div>ul:eq(0)>li:eq(4)>input").val(60+"分钟");
+							if($.openRoomInfo.bolIsTimeNum==false){
+								$(".sectionOpenRoom>div>ul>li:eq(4)").hide();
+								bolIsTimeNum=false;
+							}
+							var v="";
+							if(!!$.openRoomInfo.bookingID){
+								v= $.openRoomInfo.custmerName||$.openRoomInfo.introducerName||$.openRoomInfo.telephone;
+							}else{
+								v="无";
+							}
+							$(".sectionOpenRoom>div>ul>li:eq(6)>b").html(v);
+						}
+						GetReceiveMondy();
+					});
+					
+						
+					function GetReceiveMondy(){
+						$(".sectionOpenRoom>div>ul:eq(0)>li>b.colorRed").html("计算中...");
+						$.openRoomInfo.peopleNum=$(".sectionOpenRoom>div>ul:eq(0)>li:eq(5)>input").val().replace(/[^0-9]/ig,"");
+						$.openRoomInfo.roomChargeType=$(".roomChargeType").val();
+						$.openRoomInfo.drinkChargeType=$(".drinkChargeType").val();
+						$.openRoomInfo.time=$(".sectionOpenRoom>div>ul:eq(0)>li:eq(4)>input").val().replace(/[^0-9]/ig,"");
+						$.openRoomInfo.bolIsTimeNum=bolIsTimeNum;
+						$.openRoomInfo.roomId=$.dataConfirmCheckedRoomId;
+						if(!$.openRoomInfo.time||!$.openRoomInfo.drinkChargeType||!$.openRoomInfo.roomChargeType){
+							$(".sectionOpenRoom>div>ul:eq(0)>li>b.colorRed").html("请填写开台信息");
+							return;
+						}
+							
+						sendGetReceiveMondy($.openRoomInfo.roomChargeType,$.openRoomInfo.drinkChargeType,$.openRoomInfo.time,function(str){
+							$.data_ftRecipe_Fee=$(str).html();
+							$(".sectionOpenRoom>div>ul:eq(0)>li>b.colorRed").html("&yen;"+$.data_ftRecipe_Fee);
+						});
+					}
+					function sendGetReceiveMondy(roomTypeId,foodTypeId,time,parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/GetReceiveMondy.xml",
+							data:"url="+encodeURIComponent("GetReceiveMondy/"+$.dataConfirmCheckedRoomId+","+roomTypeId+","+foodTypeId+","+time)+"&method=get",
+							//url:"http://10.0.3.72:8887/HttpCalculatorService/HttpCalculatorService/GetRoomAndRecipeRule/"+$.dataConfirmCheckedRoomId,
+							dataType:"text",
+							success:function(str){
+								if(!!parseDataFn)
+									parseDataFn(str);
+							},
+							error:function(){
+								
+							}
+						});
+					}
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>

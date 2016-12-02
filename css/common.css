@@ -1,0 +1,91 @@
+.badge{
+	display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: rgba(136, 136, 136, 0.23);
+    border-radius: 10px;
+}
+.payButton{
+	width: 80%;
+    height: 47px;
+    background-color: #4CAE4C;
+    box-shadow: 0px 0px 3px #333333;
+    border: 1px #4CAE4C solid;
+    display: block;
+    margin: 0 auto;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    outline: none;
+    color: #FFFFFF;
+    font-size: 20px;
+    line-height: 43px;
+    font-weight: 600;
+    transition: background-color 0.25s;
+    -webkit-transition: background-color 0.25s;
+}
+.payButton:active{
+	background-color: #3F8C3F;
+}
+.titleLabel{
+	width: auto;
+    display: block;
+    font-size: 14px;
+    padding-left: 13px;
+    color: #717171;
+    line-height: 38px;
+    position: relative;
+    text-align: left;
+}
+.listInput{
+	width: 70%;
+    height: 47px;
+    line-height: 47px;
+    position: absolute;
+    right: 0px;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+}
+.listSelect{
+	position: absolute;
+    right: 0px;
+    width: 50%;
+    height: 47px;
+    line-height: 47px;
+    outline: none;
+    border: none;
+    -webkit-appearance: none;
+    background-color: #transparent;
+}
+.loadBtn{
+	background-color: #CCCCCC;
+	color: #FFFFFF;
+	position: relative;
+	pointer-events: none;
+    box-shadow: inset 0px 0px 5px rgba(197, 197, 197, 0.65);
+	border: none;
+}
+.loadBtn::after{
+    content: "加载中...";
+    width: 100%;
+    height: 100%;
+    background-color: #CCCCCC;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    border-radius: inherit;
+    text-align: center;
+    font-size: initial;
+    box-shadow: 0px 0px 8px #DCDCDC;
+    border: 1px #D8D8D8 solid;
+}

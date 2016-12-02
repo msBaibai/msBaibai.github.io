@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>erp</title>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.js" ></script>
+	</head>
+	<body>
+		<div>
+			<style>
+				.sectionUserStateSelect{
+					margin-top: 3px;
+					height: calc(100% - 47px);
+				}
+				.sectionUserStateSelect>div{
+					width: 100%;
+					height: 100%;
+					position: relative;
+					overflow-y: hidden;
+				}
+				
+				.sectionUserStateSelect>div>ul>li>span{
+					position: absolute;
+					right: 12px;
+					color: #8A8989;
+					line-height: 41px;
+					color: #337AB7;
+					display: none;
+				}
+				.sectionUserStateSelect>div>ul>li.active>span{
+					display: block;
+				}
+				.sectionUserStateSelect>div>ul>li:active{
+					background-color: #CCCCCC;
+				}
+				.outInfo,.outInfoTextArea{
+					display: none;
+				}
+				.outInfoTextArea{
+					width: 100%;
+					text-align: center;
+				}
+				.outInfoTextArea>textarea{
+					width: 95%;
+				    margin: 0 auto;
+				    height: auto;
+				    min-height: 120px;
+				    outline: none;
+				    font-size: 14px;
+				    box-shadow: inset 0px 0px 5px #909090;
+				}
+			</style>
+			<header class="header">
+				<h4>状态</h4>
+				<a class="toBack"><span class="glyphicon glyphicon-chevron-left"></span></a>
+				<a class="userStateSelectSubmit">确认</a>
+			</header>
+			<section class="sectionUserStateSelect">
+				<div>
+					<label class="titleLabel">请选择当前状态：</label>
+					<ul class="list">
+						<li>在线<span class="glyphicon glyphicon-ok"></span></li>
+						<li class="outLine">暂离<span class="glyphicon glyphicon-ok"></span></li>
+					</ul>
+					<label class="titleLabel outInfo">请选择暂离原因：</label>
+					<ul class="list outInfo">
+						<li>去洗手间<span class="glyphicon glyphicon-ok"></span></li>
+						<li>外出买东西<span class="glyphicon glyphicon-ok"></span></li>
+						<li>抽根烟精神精神<span class="glyphicon glyphicon-ok"></span></li>
+						<li class="other">其他<span class="glyphicon glyphicon-ok"></span></li>
+					</ul>
+					<div class="outInfoTextArea">
+						<label class="titleLabel">请填写暂离原因：</label>
+						<textarea></textarea>
+					</div>
+				</div>
+			</section>
+			<script>
+				$.init=function(){
+					$.tap(".sectionUserStateSelect>div>ul:eq(0)>li",function(){
+						$(this).parent().children(".active").removeClass("active");
+						$(this).addClass("active");
+						if($(this).hasClass("outLine")){
+							$(".outInfo").css("display","block");
+						}else{
+							$(".outInfo").css("display","none");
+							$(".other").removeClass("active");
+							$(".outInfoTextArea").css("display","none");
+							$(".sectionUserStateSelect>div>ul:eq(1)>li.active").removeClass("active");
+						}
+					});
+					$.tap(".sectionUserStateSelect>div>ul:eq(1)>li",function(){
+						$(this).parent().children(".active").removeClass("active");
+						$(this).addClass("active");
+						if($(this).hasClass("other")){
+							$(".outInfoTextArea").css("display","block");
+						}else{
+							$(".outInfoTextArea").css("display","none");
+						}
+					});
+					$.tap(".outInfoTextArea>textarea",function(){
+						$(this).focus();
+					});
+					$.tap(".userStateSelectSubmit",function(){
+						var state=$(".sectionUserStateSelect>div>ul:eq(0)>li.active").text();
+						if(state=="在线")
+							state="回来";
+						var info="";
+						if($(".sectionUserStateSelect>div>ul:eq(1)>li.active").hasClass("other")){
+							info=$(".outInfoTextArea>textarea").val();
+						}else{
+							info=$(".sectionUserStateSelect>div>ul:eq(1)>li.active").text();
+						}
+						$.updateState(state,info);
+						$.toBack();
+					});
+					$.tap("a.toBack",function(){
+						$.toBack();
+					});
+					
+					
+				}
+			</script>
+		</div>
+		
+	</body>
+</html>
