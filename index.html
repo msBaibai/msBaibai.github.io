@@ -410,6 +410,7 @@
 										window.plus.finish();
 									}catch(e){
 										$.altAuto("退出");
+										$(window).off("hashchange");
 									}
 								},"cancel":function(){
 									toBKLogin();
