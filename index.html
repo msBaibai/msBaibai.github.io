@@ -314,11 +314,11 @@
 				<ul class="list">
 					<li>
 						账号
-						<input class="userName listInput" type="text" placeholder="请输入账号" value="test" />
+						<input class="userName listInput" type="text" placeholder="请输入账号"/>
 					</li>
 					<li>
 						密码
-						<input class="passWord listInput" type="password" placeholder="请输入密码" value="test"/>
+						<input class="passWord listInput" type="password" placeholder="请输入密码"/>
 					</li>
 					<li>
 						自动登录
@@ -332,6 +332,9 @@
 		</div>
 		<script>
 			$.init=function(){
+				$(".userName").val("test");
+				$(".passWord").val("test");
+				
 				if($("foot").length==2){
 					$("foot:eq(1)").remove();
 				}
