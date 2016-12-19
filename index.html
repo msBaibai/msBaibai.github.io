@@ -332,8 +332,6 @@
 		</div>
 		<script>
 			$.init=function(){
-				$(".userName").val("test");
-				$(".passWord").val("test");
 				
 				if($("foot").length==2){
 					$("foot:eq(1)").remove();
@@ -344,6 +342,9 @@
 				if(!!localStorage.getItem("userName")){
 					$(".loginFormDiv>ul>li>span>input.switch")[0].checked=true;
 				}
+				$(".userName").val("test");
+				$(".passWord").val("test");
+				
 				/*刷新*/
 //				var dq=localStorage.getItem("dq");
 //				if(!!dq){
