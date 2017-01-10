@@ -124,12 +124,10 @@
 		</div>
 		<script>
 			loadJs("jquery-1.7.2",function(){
-				var jsList=["isPC","common","saveHTML"];
-				loadJsM(jsList,function(){
+				loadJs("init",function(){
 					$.saveHTMLInit();
 					$.deleteHTML();
 					loadJs("openPage",function(){
-						
 						function isWeiXin(){
 						    var ua = window.navigator.userAgent.toLowerCase();
 						    if(ua.match(/MicroMessenger/i) == 'micromessenger'){
