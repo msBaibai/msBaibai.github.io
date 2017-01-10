@@ -103,47 +103,49 @@
 			</section>
 			<script>
 				$.init=function(){
-					var info={
-						"foremanId":$.data_currentUserId,
-						"type":"0",
-						"mark":"0",
-						"time":"0"
-					};
-					
-					$.tap(".punchClockDiv>div:eq(0)>span",function(){
-						$(".punchClockDiv>div:eq(0)>span.active").removeClass("active");
-						$(this).addClass("active");
-						clearInterval($.timer);
-						createQRcode($(this).attr("state"));
-					});
-					function createQRcode(state){
-						info.type=state;
-						info.mark=new Date().getTime();
-						info.time=createDate();
-						var str=JSON.stringify(info);
-						$(".punchClockDiv>.img>canvas").remove();
-						$(".punchClockDiv>.img").qrcode({width:200,height:200,correctLevel:QRErrorCorrectLevel.H,text:str});
-					}
-					function createDate(){
-						var date=new Date();
-						return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
-					}
-					createQRcode("0");
-					function sendSelectPunch(info,parseDataFn){
-						$.ajax({
-							type:"get",
-							url:"json/punch-select.json",
-							dataType:"text",
-							data:"punch.punch_mark="+info.mark,
-							success:function(str){
-								parseDataFn(str);
-							},
-							error:function(){
-								$.alt("操作失败!");
-								//clearInterval($.timer);
-							}
+					loadJsM(["qrcode","jquery.qrcode"],function(){
+						var info={
+							"foremanId":$.data_currentUserId,
+							"type":"0",
+							"mark":"0",
+							"time":"0"
+						};
+						
+						$.tap(".punchClockDiv>div:eq(0)>span",function(){
+							$(".punchClockDiv>div:eq(0)>span.active").removeClass("active");
+							$(this).addClass("active");
+							clearInterval($.timer);
+							createQRcode($(this).attr("state"));
 						});
-					}
+						function createQRcode(state){
+							info.type=state;
+							info.mark=new Date().getTime();
+							info.time=createDate();
+							var str=JSON.stringify(info);
+							$(".punchClockDiv>.img>canvas").remove();
+							$(".punchClockDiv>.img").qrcode({width:200,height:200,correctLevel:QRErrorCorrectLevel.H,text:str});
+						}
+						function createDate(){
+							var date=new Date();
+							return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+						}
+						createQRcode("0");
+						function sendSelectPunch(info,parseDataFn){
+							$.ajax({
+								type:"get",
+								url:"json/punch-select.json",
+								dataType:"text",
+								data:"punch.punch_mark="+info.mark,
+								success:function(str){
+									parseDataFn(str);
+								},
+								error:function(){
+									$.alt("操作失败!");
+									//clearInterval($.timer);
+								}
+							});
+						}
+					});
 				}
 			</script>
 		</div>

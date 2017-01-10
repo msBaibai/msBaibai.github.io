@@ -413,7 +413,8 @@
 		
 		<script>
 			$.init=function(){
-				loadJsM(["createConfirmBox","iscroll-probe","echarts.min","qrcode","jquery.qrcode","jsonConstruction","sendSatateAjax","webSource","jsonCommon","fileUpload","serviceTimer"],function(){
+				//["createConfirmBox","iscroll-probe","echarts.min","qrcode","jquery.qrcode","jsonConstruction","sendSatateAjax","webSource","jsonCommon","fileUpload","serviceTimer"]
+				loadJs("all",function(){
 					$(document).on("touchstart",function(){
 						try{event.returnValue = true;}catch(e){}
 					});
