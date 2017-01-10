@@ -413,398 +413,400 @@
 		
 		<script>
 			$.init=function(){
-				$(document).on("touchstart",function(){
-					try{event.returnValue = true;}catch(e){}
-				});
-				var roomsState={"0":"kongxian","1":"yuding","2":"daike","3":"shiyong","4":"yushi","5":"chaoshi","6":"mandixiao","7":"yifu","8":"dadan","9":"jiezhang","10":"qingsao","11":"jinyong"};
-				function sendSelectAreaList(){
-					if(!!$.data_sendSelectAreaList){
-						return $.Deferred().resolve({0:$.data_sendSelectAreaList});
-					}else{
+				loadJsM(["createConfirmBox","iscroll-probe","echarts.min","qrcode","jquery.qrcode","jsonConstruction","sendSatateAjax","webSource","jsonCommon","fileUpload","serviceTimer"],function(){
+					$(document).on("touchstart",function(){
+						try{event.returnValue = true;}catch(e){}
+					});
+					var roomsState={"0":"kongxian","1":"yuding","2":"daike","3":"shiyong","4":"yushi","5":"chaoshi","6":"mandixiao","7":"yifu","8":"dadan","9":"jiezhang","10":"qingsao","11":"jinyong"};
+					function sendSelectAreaList(){
+						if(!!$.data_sendSelectAreaList){
+							return $.Deferred().resolve({0:$.data_sendSelectAreaList});
+						}else{
+							return $.ajax({
+								type:"get",
+								url:"xml/GetRoomArea.xml",
+								dataType:"text",
+								success:function(str){
+									$.data_sendSelectAreaList=str;
+								},
+								error:function(){
+									$.alt("加载区域列表失败!");
+								}
+							});
+						}
+					}
+					function sendSelectRooms(){
 						return $.ajax({
 							type:"get",
-							url:"xml/GetRoomArea.xml",
+							url:"xml/GetRoomInfoDetail.xml",
 							dataType:"text",
 							success:function(str){
-								$.data_sendSelectAreaList=str;
 							},
 							error:function(){
-								$.alt("加载区域列表失败!");
+								$.alt("加载房间失败!");
 							}
 						});
 					}
-				}
-				function sendSelectRooms(){
-					return $.ajax({
-						type:"get",
-						url:"xml/GetRoomInfoDetail.xml",
-						dataType:"text",
-						success:function(str){
-						},
-						error:function(){
-							$.alt("加载房间失败!");
-						}
-					});
-				}
-				function sendCheckStaffRight(parseDataFn){
-					$.ajax({
-						type:"get",
-						url:"xml/CheckStaffRight.xml",
-						dataType:"text",
-						success:function(str){
-							parseDataFn(str);
-						},
-						error:function(){
-							$.alt("加载权限失败!");
-						}
-					});
-				}
-				
-				function sendGetMobileErpSal(parseDataFn){
-					var date=new Date();
-					var star=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
-					date.setDate(date.getDate()+1);
-					var end=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
-					$.ajax({
-						type:"get",
-						url:"xml/GetMobileErpSal.xml",
-						dataType:"text",
-						success:function(str){
-							parseDataFn(str);
-						},
-						error:function(){
-							$.alt("加载上交款项失败!");
-						}
-					});
-				}
-				function sendGetStaffInfo(parseDataFn){
-					$.ajax({
-						type:"get",
-						url:"xml/GetStaffInfo.xml",
-						dataType:"text",
-						success:function(str){
-							parseDataFn(str);
-						},
-						error:function(){
-							$.alt("获取员工信息失败!");
-						}
-					});
-				}
-				$.myScroll=new IScroll(".indexNav");
-				function initLoadRoom(fn){
-					$(".loading").css("display","block");
-					$.when(sendSelectAreaList(),sendSelectRooms()).done(function(str1,str2){
-						var xml1=str1[0];
-						var xml2=str2[0];
-						var html="";
-						$(xml1).find("NewDataSet>RoomArea").each(function(){
-							html+="<label class=\"titleLabel\" areaId=\""+$(this).children("RoomArea_ID").text()+"\">"+$(this).children("RoomArea_Name").text()+"</label>";
-							html+="<ul>"+parseRoomXmlFormAreaId(xml2,$(this).children("RoomArea_ID").text())+"</ul>";
+					function sendCheckStaffRight(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/CheckStaffRight.xml",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("加载权限失败!");
+							}
 						});
-						$(".indexNav>div").html(html);
-						$(".loading").css("display","none");
-						$.data_indexCheckedRoomDivNavHTML=html;
-						$.myScroll.refresh();
-						var jsonOld=null;
-						$.initWebSource($.getRootPathAndPort()+"/erp/SelectRoomServlet.servlet?url="+encodeURIComponent("GetRoomInfoDetail/"+$.data_currentUserId),function(str){
-							if(!str)
-								return;
-							var json=$.parseJSON(str);
-							if(!jsonOld)
+					}
+					
+					function sendGetMobileErpSal(parseDataFn){
+						var date=new Date();
+						var star=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+						date.setDate(date.getDate()+1);
+						var end=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+						$.ajax({
+							type:"get",
+							url:"xml/GetMobileErpSal.xml",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("加载上交款项失败!");
+							}
+						});
+					}
+					function sendGetStaffInfo(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"xml/GetStaffInfo.xml",
+							dataType:"text",
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("获取员工信息失败!");
+							}
+						});
+					}
+					$.myScroll=new IScroll(".indexNav");
+					function initLoadRoom(fn){
+						$(".loading").css("display","block");
+						$.when(sendSelectAreaList(),sendSelectRooms()).done(function(str1,str2){
+							var xml1=str1[0];
+							var xml2=str2[0];
+							var html="";
+							$(xml1).find("NewDataSet>RoomArea").each(function(){
+								html+="<label class=\"titleLabel\" areaId=\""+$(this).children("RoomArea_ID").text()+"\">"+$(this).children("RoomArea_Name").text()+"</label>";
+								html+="<ul>"+parseRoomXmlFormAreaId(xml2,$(this).children("RoomArea_ID").text())+"</ul>";
+							});
+							$(".indexNav>div").html(html);
+							$(".loading").css("display","none");
+							$.data_indexCheckedRoomDivNavHTML=html;
+							$.myScroll.refresh();
+							var jsonOld=null;
+							$.initWebSource($.getRootPathAndPort()+"/erp/SelectRoomServlet.servlet?url="+encodeURIComponent("GetRoomInfoDetail/"+$.data_currentUserId),function(str){
+								if(!str)
+									return;
+								var json=$.parseJSON(str);
+								if(!jsonOld)
+									jsonOld=json;
+								if(JSON.stringify(jsonOld)==JSON.stringify(json))
+									return;
+								var json3=$.contrastJson(jsonOld,json,"Room_Isvalid");
+								refreshHTML(json3);
 								jsonOld=json;
-							if(JSON.stringify(jsonOld)==JSON.stringify(json))
-								return;
-							var json3=$.contrastJson(jsonOld,json,"Room_Isvalid");
-							refreshHTML(json3);
-							jsonOld=json;
+							});
+							if(!!fn)
+								fn();
 						});
-						if(!!fn)
-							fn();
-					});
-					function refreshHTML(json){
-						if(json.rows.length>0){
-							for(var i in json.rows){
-								var obj = json.rows[i];
-								var state=obj.Room_Isvalid;
-								$(".indexNav>div>ul>li[roomId='"+obj.Room_Id+"']").attr("roomState",state).attr("class",roomsState[state]);
+						function refreshHTML(json){
+							if(json.rows.length>0){
+								for(var i in json.rows){
+									var obj = json.rows[i];
+									var state=obj.Room_Isvalid;
+									$(".indexNav>div>ul>li[roomId='"+obj.Room_Id+"']").attr("roomState",state).attr("class",roomsState[state]);
+								}
 							}
 						}
 					}
-				}
-				initLoadRoom();
-				sendCheckStaffRight(function(str){
-					if($(str).html()=="true"||true){
-						$(".punchClockNone").removeClass("punchClockNone");
-					}
-				});
-				sendGetStaffInfo(function(str){
-					$.data_currentUserName=$(str).find("DocumentElement>StaffPresent>Staff_Name").text();
-					$(".navMenu>ul>li:eq(0)>span:first").html($.data_currentUserName);
-				});
-				sendGetMobileErpSal(function(str){
-					$.dataNHandReceived=$(str).find("DocumentElement>MobileErpSal>NHandReceived").text();
-					$(".navMenu>ul>li:eq(2)>span:first").html($.dataNHandReceived);
-					$(".navMenu>ul>li:eq(3)>span:first").html($(str).find("DocumentElement>MobileErpSal>HandReceived").text());
-				});
-				function parseRoomXmlFormAreaId(strRoom,no){
-					var html="";
-					$(strRoom).find("DocumentElement>RoomInfoDetail").each(function(){
-						var areaId=$(this).children("Room_AreaID").text();
-						var roomState=$(this).children("Room_Isvalid").text();
-						if(areaId==no){
-							html+="<li roomState=\""+roomState+"\" class=\""+roomsState[roomState]+"\" roomId=\""+$(this).children("Room_Id").text()+"\" roomIp=\""+$(this).children("Room_Ip:eq(0)").text()+"\">"+$(this).children("Room_Name").text()+"</li>";
+					initLoadRoom();
+					sendCheckStaffRight(function(str){
+						if($(str).html()=="true"||true){
+							$(".punchClockNone").removeClass("punchClockNone");
 						}
 					});
-					return html;
-				}
-				$.tap(".userInfoShow",function(){
-					$(".indexContentDiv").addClass("menuListShow");
-				});
-				$.tap(".navMenu+aside",function(){
-					$(".indexContentDiv").removeClass("menuListShow");
-				});
-				$(".menuHide").on("click",function(){
-					$.initOpenPage();
-					$(".navMenu").css("display","none");
-				});
-				$.tap(".sampleDiv>ul>li",function(){
-					var _this=$(this);
-					$(".sampleDiv>ul>li.active").removeClass("active");
-					roomsStateClick("."+_this.attr("class"));
-					_this.addClass("active");
-//					initLoadRoom(function(){
-//						roomsStateClick("."+_this.attr("class"));
-//					});
-				});
-				$.tap(".mainToHref",function(){
-					$.initOpenPage();
-					var href=$(this).attr("href");
-					window.setTimeout(function(){
+					sendGetStaffInfo(function(str){
+						$.data_currentUserName=$(str).find("DocumentElement>StaffPresent>Staff_Name").text();
+						$(".navMenu>ul>li:eq(0)>span:first").html($.data_currentUserName);
+					});
+					sendGetMobileErpSal(function(str){
+						$.dataNHandReceived=$(str).find("DocumentElement>MobileErpSal>NHandReceived").text();
+						$(".navMenu>ul>li:eq(2)>span:first").html($.dataNHandReceived);
+						$(".navMenu>ul>li:eq(3)>span:first").html($(str).find("DocumentElement>MobileErpSal>HandReceived").text());
+					});
+					function parseRoomXmlFormAreaId(strRoom,no){
+						var html="";
+						$(strRoom).find("DocumentElement>RoomInfoDetail").each(function(){
+							var areaId=$(this).children("Room_AreaID").text();
+							var roomState=$(this).children("Room_Isvalid").text();
+							if(areaId==no){
+								html+="<li roomState=\""+roomState+"\" class=\""+roomsState[roomState]+"\" roomId=\""+$(this).children("Room_Id").text()+"\" roomIp=\""+$(this).children("Room_Ip:eq(0)").text()+"\">"+$(this).children("Room_Name").text()+"</li>";
+							}
+						});
+						return html;
+					}
+					$.tap(".userInfoShow",function(){
+						$(".indexContentDiv").addClass("menuListShow");
+					});
+					$.tap(".navMenu+aside",function(){
+						$(".indexContentDiv").removeClass("menuListShow");
+					});
+					$(".menuHide").on("click",function(){
+						$.initOpenPage();
 						$(".navMenu").css("display","none");
-						window.location.href=href;
-					},100);
-				});
-				$.tap(".sweepQRCode",function(){
-					try{
-						window.plus.jumpScan();
-					}catch(e){
-						$.altAuto("该环境不支持扫码");
-					}
-				});
-				$(".navMenu>img").attr("src","img/"+$.data_currentUserId+".jpg?_="+(new Date()).getTime());
-//				$(".navMenu>img").attr("fileName",$.data_currentUserId+".jpg").upload($.getRootPathAndPort()+"/erp/photoUpload!upload",function(xhr){
-//					if(xhr.responseText=="success"){
-//						$(".navMenu>img").attr("src",$.getRootPathAndPort()+"/erp/upload/"+$.data_currentUserId+".jpg?_="+(new Date()).getTime());
-//					}
-//				});
-				$.tap(".navMenu>img",function(){
-					var input=$(".navMenu>input[type='file']")
-					input.click();
-					input.on("change",function(){
-						input=input[0];
-						if(input.files.length==0){
-							return;
+					});
+					$.tap(".sampleDiv>ul>li",function(){
+						var _this=$(this);
+						$(".sampleDiv>ul>li.active").removeClass("active");
+						roomsStateClick("."+_this.attr("class"));
+						_this.addClass("active");
+	//					initLoadRoom(function(){
+	//						roomsStateClick("."+_this.attr("class"));
+	//					});
+					});
+					$.tap(".mainToHref",function(){
+						$.initOpenPage();
+						var href=$(this).attr("href");
+						window.setTimeout(function(){
+							$(".navMenu").css("display","none");
+							window.location.href=href;
+						},100);
+					});
+					$.tap(".sweepQRCode",function(){
+						try{
+							window.plus.jumpScan();
+						}catch(e){
+							$.altAuto("该环境不支持扫码");
 						}
-						for(var i in input.files){
-							if (input.files.hasOwnProperty(i)&&!isNaN(i)){
-								var file = input.files[i];
-								var reader = new FileReader();
-				                reader.onload=function(){
-				                	try{
-				                		$.cutImgSrc=this.result;
-				                		sessionStorage.setItem("cutImgSrc",this.result);
-				                	}catch(e){}
-				                    $.initOpenPage();
-									window.location.hash="#cutImg.html";
-				                }
-				                reader.readAsDataURL(file);
+					});
+					$(".navMenu>img").attr("src","img/"+$.data_currentUserId+".jpg?_="+(new Date()).getTime());
+	//				$(".navMenu>img").attr("fileName",$.data_currentUserId+".jpg").upload($.getRootPathAndPort()+"/erp/photoUpload!upload",function(xhr){
+	//					if(xhr.responseText=="success"){
+	//						$(".navMenu>img").attr("src",$.getRootPathAndPort()+"/erp/upload/"+$.data_currentUserId+".jpg?_="+(new Date()).getTime());
+	//					}
+	//				});
+					$.tap(".navMenu>img",function(){
+						var input=$(".navMenu>input[type='file']")
+						input.click();
+						input.on("change",function(){
+							input=input[0];
+							if(input.files.length==0){
+								return;
 							}
-						}
-					});
-						
-				});
-				
-				window.getUploadFile=function(str){
-					alert(str.length);
-				}
-				function roomsStateClick(state){
-					if(state==".quanbu") state="";
-					$(".indexNav>div>ul>li").css("display","none");
-					$(".indexNav>div>ul>li"+state).css("display","inline-block");
-					$.myScroll.refresh();
-				}
-				$.tap(".indexNav>div>ul>li:not(.shiyong,.kongxian,.yuding,.yifu)",function(){
-					var _this=$(this)
-					var label=_this.parent().prev();
-					$.dataConfirmCheckedAreaId=label.attr("areaId");
-					$.dataConfirmCheckedAreaName=label.html();
-					$.dataConfirmCheckedRoomId=_this.attr("roomId");
-					$.dataConfirmCheckedRoomName=_this.html();
-					$.dataConfirmCheckedRoomIP=_this.attr("roomIp");
-					$.initOpenPage();
-					$.createBottomList([
-						{text:"当前房间:"+_this.html(),click:function(){}},
-						{text:"查看",click:function(e){
-							e.stopPropagation();
-							$(".bottomList").removeClass("show");
-							$.initOpenPage();
-							$.updateState("查看",$.dataConfirmCheckedRoomName);
-							var tm=window.setTimeout(function(){
-								clearTimeout(tm);
-								window.location.href="#menu.html";
-							},100);
-						}}
-					],function(){
-						toBK();
-					});
-				});
-				$.tap(".indexNav>div>ul>li.shiyong,.indexNav>div>ul>li.yifu",function(){
-					var _this=$(this)
-					var label=_this.parent().prev();
-					$.dataConfirmCheckedAreaId=label.attr("areaId");
-					$.dataConfirmCheckedAreaName=label.html();
-					$.dataConfirmCheckedRoomId=_this.attr("roomId");
-					$.dataConfirmCheckedRoomName=_this.html();
-					$.dataConfirmCheckedRoomIP=_this.attr("roomIp");
-					$.createBottomList([
-						{text:"当前房间:"+_this.html(),click:function(){}},
-						{text:"结账",click:function(e){
-							e.stopPropagation();
-							$(".bottomList").removeClass("show");
-							$.initOpenPage();
-							$.updateState("结账",$.dataConfirmCheckedRoomName);
-							var tm=window.setTimeout(function(){
-								clearTimeout(tm);
-								window.location.href="#checkoutMoney.html";
-							},100);
-						}},
-						{text:"点餐",click:function(e){
-							e.stopPropagation();
-							$(".bottomList").removeClass("show");
-							$.initOpenPage();
-							$.updateState("进房",$.dataConfirmCheckedRoomName);
-							var tm=window.setTimeout(function(){
-								clearTimeout(tm);
-								window.location.href="#menu.html";
-							},100);
-						}},
-						{text:"已点",click:function(e){
-							e.stopPropagation();
-							$(".bottomList").removeClass("show");
-							$.initOpenPage();
-							$.updateState("已点",$.dataConfirmCheckedRoomName);
-							var tm=window.setTimeout(function(){
-								clearTimeout(tm);
-								window.location.href="#historicalOrder.html";
-							},100);
-						}}
-					],function(){
-						toBK();
-					});
-				});
-				$.tap(".indexNav>div>ul>li.kongxian,.indexNav>div>ul>li.yuding",function(){
-					var _this=$(this)
-					var label=_this.parent().prev();
-					$.dataConfirmCheckedAreaId=label.attr("areaId");
-					$.dataConfirmCheckedAreaName=label.html();
-					$.dataConfirmCheckedRoomId=_this.attr("roomId");
-					$.dataConfirmCheckedRoomName=_this.html();
-					$.dataConfirmCheckedRoomIP=_this.attr("roomIp");
-					$.createBottomList([
-						{text:"当前房间:"+_this.html(),click:function(){}},
-						{text:"开台",click:function(e){
-							e.stopPropagation();
-							$(".bottomList").removeClass("show");
-							$.initOpenPage();
-							$.updateState("开台",$.dataConfirmCheckedRoomName);
-							$.timerOut=window.setTimeout(function(){
-								clearTimeout($.timerOut);
-								window.location.href="#openRoom.html";
-							},100);
-						}}
-					],function(){
-						toBK();
-					});
-				});
-				
-				function toBK(){
-					window.setTimeout(function(){
-						var hash=window.location.hash;
-						$(window).off("hashchange").on("hashchange",function(){
-							window.location.hash=hash;
-							window.setTimeout(function(){
-								$.createConfirmBox({"title":"系统提示","content":"是否确认登出?","click":function(){
-									try{
-										$.updateState("已登出");
-										window.plus.logout();
-									}catch(e){
-										$.altAuto("登出");
-									}
-									window.setTimeout(function(){
-										window.location.hash="#index.html";
-									},100);
-								},"cancel":function(){
-									toBK();
-								}});
-							},100);
+							for(var i in input.files){
+								if (input.files.hasOwnProperty(i)&&!isNaN(i)){
+									var file = input.files[i];
+									var reader = new FileReader();
+					                reader.onload=function(){
+					                	try{
+					                		$.cutImgSrc=this.result;
+					                		sessionStorage.setItem("cutImgSrc",this.result);
+					                	}catch(e){}
+					                    $.initOpenPage();
+										window.location.hash="#cutImg.html";
+					                }
+					                reader.readAsDataURL(file);
+								}
+							}
 						});
-					},100);
-				}
-				toBK();
-				
-				
-				
-				if(!!$.timer)
-					clearInterval($.timer);
-				window.getQRCodeContent=function(str){
-					var json=$.parseJSON(str);
-					sendInsertPunch(json,function(str){
-						if(json.type=="0"){
-							$.altAuto("上班打卡成功");
-						}else if(json.type=="1"){
-							$.altAuto("下班打卡成功");
-						}
-						
+							
 					});
-				}
-				function sendInsertPunch(json,parseDataFn){
-					$.ajax({
-						type:"get",
-						url:$.getRootPathAndPort()+"/erp/punch!insert",
-						dataType:"text",
-						data:createInsertPunchData(json),
-						success:function(str){
-							parseDataFn(str);
-						},
-						error:function(){
-							$.alt("生成上下班二维码失败!");
+					
+					window.getUploadFile=function(str){
+						alert(str.length);
+					}
+					function roomsStateClick(state){
+						if(state==".quanbu") state="";
+						$(".indexNav>div>ul>li").css("display","none");
+						$(".indexNav>div>ul>li"+state).css("display","inline-block");
+						$.myScroll.refresh();
+					}
+					$.tap(".indexNav>div>ul>li:not(.shiyong,.kongxian,.yuding,.yifu)",function(){
+						var _this=$(this)
+						var label=_this.parent().prev();
+						$.dataConfirmCheckedAreaId=label.attr("areaId");
+						$.dataConfirmCheckedAreaName=label.html();
+						$.dataConfirmCheckedRoomId=_this.attr("roomId");
+						$.dataConfirmCheckedRoomName=_this.html();
+						$.dataConfirmCheckedRoomIP=_this.attr("roomIp");
+						$.initOpenPage();
+						$.createBottomList([
+							{text:"当前房间:"+_this.html(),click:function(){}},
+							{text:"查看",click:function(e){
+								e.stopPropagation();
+								$(".bottomList").removeClass("show");
+								$.initOpenPage();
+								$.updateState("查看",$.dataConfirmCheckedRoomName);
+								var tm=window.setTimeout(function(){
+									clearTimeout(tm);
+									window.location.href="#menu.html";
+								},100);
+							}}
+						],function(){
+							toBK();
+						});
+					});
+					$.tap(".indexNav>div>ul>li.shiyong,.indexNav>div>ul>li.yifu",function(){
+						var _this=$(this)
+						var label=_this.parent().prev();
+						$.dataConfirmCheckedAreaId=label.attr("areaId");
+						$.dataConfirmCheckedAreaName=label.html();
+						$.dataConfirmCheckedRoomId=_this.attr("roomId");
+						$.dataConfirmCheckedRoomName=_this.html();
+						$.dataConfirmCheckedRoomIP=_this.attr("roomIp");
+						$.createBottomList([
+							{text:"当前房间:"+_this.html(),click:function(){}},
+							{text:"结账",click:function(e){
+								e.stopPropagation();
+								$(".bottomList").removeClass("show");
+								$.initOpenPage();
+								$.updateState("结账",$.dataConfirmCheckedRoomName);
+								var tm=window.setTimeout(function(){
+									clearTimeout(tm);
+									window.location.href="#checkoutMoney.html";
+								},100);
+							}},
+							{text:"点餐",click:function(e){
+								e.stopPropagation();
+								$(".bottomList").removeClass("show");
+								$.initOpenPage();
+								$.updateState("进房",$.dataConfirmCheckedRoomName);
+								var tm=window.setTimeout(function(){
+									clearTimeout(tm);
+									window.location.href="#menu.html";
+								},100);
+							}},
+							{text:"已点",click:function(e){
+								e.stopPropagation();
+								$(".bottomList").removeClass("show");
+								$.initOpenPage();
+								$.updateState("已点",$.dataConfirmCheckedRoomName);
+								var tm=window.setTimeout(function(){
+									clearTimeout(tm);
+									window.location.href="#historicalOrder.html";
+								},100);
+							}}
+						],function(){
+							toBK();
+						});
+					});
+					$.tap(".indexNav>div>ul>li.kongxian,.indexNav>div>ul>li.yuding",function(){
+						var _this=$(this)
+						var label=_this.parent().prev();
+						$.dataConfirmCheckedAreaId=label.attr("areaId");
+						$.dataConfirmCheckedAreaName=label.html();
+						$.dataConfirmCheckedRoomId=_this.attr("roomId");
+						$.dataConfirmCheckedRoomName=_this.html();
+						$.dataConfirmCheckedRoomIP=_this.attr("roomIp");
+						$.createBottomList([
+							{text:"当前房间:"+_this.html(),click:function(){}},
+							{text:"开台",click:function(e){
+								e.stopPropagation();
+								$(".bottomList").removeClass("show");
+								$.initOpenPage();
+								$.updateState("开台",$.dataConfirmCheckedRoomName);
+								$.timerOut=window.setTimeout(function(){
+									clearTimeout($.timerOut);
+									window.location.href="#openRoom.html";
+								},100);
+							}}
+						],function(){
+							toBK();
+						});
+					});
+					
+					function toBK(){
+						window.setTimeout(function(){
+							var hash=window.location.hash;
+							$(window).off("hashchange").on("hashchange",function(){
+								window.location.hash=hash;
+								window.setTimeout(function(){
+									$.createConfirmBox({"title":"系统提示","content":"是否确认登出?","click":function(){
+										try{
+											$.updateState("已登出");
+											window.plus.logout();
+										}catch(e){
+											$.altAuto("登出");
+										}
+										window.setTimeout(function(){
+											window.location.hash="#index.html";
+										},100);
+									},"cancel":function(){
+										toBK();
+									}});
+								},100);
+							});
+						},100);
+					}
+					toBK();
+					
+					
+					
+					if(!!$.timer)
+						clearInterval($.timer);
+					window.getQRCodeContent=function(str){
+						var json=$.parseJSON(str);
+						sendInsertPunch(json,function(str){
+							if(json.type=="0"){
+								$.altAuto("上班打卡成功");
+							}else if(json.type=="1"){
+								$.altAuto("下班打卡成功");
+							}
+							
+						});
+					}
+					function sendInsertPunch(json,parseDataFn){
+						$.ajax({
+							type:"get",
+							url:$.getRootPathAndPort()+"/erp/punch!insert",
+							dataType:"text",
+							data:createInsertPunchData(json),
+							success:function(str){
+								parseDataFn(str);
+							},
+							error:function(){
+								$.alt("生成上下班二维码失败!");
+							}
+						});
+					}
+					function sendLoadUserState(parseDataFn){
+						$.ajax({
+							type:"get",
+							url:"json/smart_StaffsState-getSingle.json",
+							dataType:"json",
+							success:function(json){
+								parseDataFn(json);
+							},
+							error:function(){
+								$.alt("加载员工状态失败!");
+							}
+						});
+					}
+					sendLoadUserState(function(json){
+						var result=json.rows[0].isTemporarily;
+						if(result=="true"){
+							$(".navMenu>ul>li:eq(1)>span:first").html("暂离").removeClass("shiyong").addClass("kongxian");
+						}else{
+							$(".navMenu>ul>li:eq(1)>span:first").html("在线").removeClass("kongxian").addClass("shiyong");
 						}
 					});
-				}
-				function sendLoadUserState(parseDataFn){
-					$.ajax({
-						type:"get",
-						url:"json/smart_StaffsState-getSingle.json",
-						dataType:"json",
-						success:function(json){
-							parseDataFn(json);
-						},
-						error:function(){
-							$.alt("加载员工状态失败!");
-						}
-					});
-				}
-				sendLoadUserState(function(json){
-					var result=json.rows[0].isTemporarily;
-					if(result=="true"){
-						$(".navMenu>ul>li:eq(1)>span:first").html("暂离").removeClass("shiyong").addClass("kongxian");
-					}else{
-						$(".navMenu>ul>li:eq(1)>span:first").html("在线").removeClass("kongxian").addClass("shiyong");
+					function createInsertPunchData(json){
+						return "punch.punch_AdministraterId="+json.foremanId+"&punch.punch_Type="+json.type+"&punch.punch_mark="+json.mark+"&punch.punch_time="+json.time+"&punch.punch_userId="+$.data_currentUserId;
 					}
 				});
-				function createInsertPunchData(json){
-					return "punch.punch_AdministraterId="+json.foremanId+"&punch.punch_Type="+json.type+"&punch.punch_mark="+json.mark+"&punch.punch_time="+json.time+"&punch.punch_userId="+$.data_currentUserId;
-				}
 			}
 		</script>
 	</body>
