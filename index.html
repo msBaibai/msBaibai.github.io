@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html>
+
 	<head>
-		<meta charset="UTF-8">
-		<title>移动ERP</title>
-		<link rel="apple-touch-icon-precomposed" sizes="57x57" href="img/icon.png">
-		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/icon.png">
-		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/icon.png">
-		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/icon.png">
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<meta http-equiv="Pragma" content="no-cache" />
 		<meta http-equiv="Cache-Control" content="no-cache,no-store" />
 		<meta http-equiv="Expires" content="0" />
@@ -15,264 +12,194 @@
 		<meta content="telephone=no" name="format-detection">
 		<meta name="x5-fullscreen" content="true">
 		<meta name="full-screen" content="yes">
-		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<link rel="stylesheet" type="text/css" href="css/style.css" />
-		<script type="text/javascript" src="js/AMD.js" ></script>
-		<style id="ifWxStyle">
-			.menuListShow{
-				-webkit-filter: blur(3px);
+		<title>会员管理</title>
+		<script type="text/javascript" src="js/d.js" ></script>
+		<script>
+			deleteHTML();
+			var zepto="js/zepto.min.js";
+			getHTML(zepto,function(text){
+				if(!text||text==null||text=="null"||text=="undefined"){
+					ajax(zepto,function(jsText){
+						addHTML(zepto,jsText);
+						eval.call(window,jsText);
+						initIndex();
+					});
+				}else{
+					eval.call(window,text);
+					initIndex();
+				}
+			});
+			function ajax(url,fn){
+				var xmlhttp;
+				if (window.XMLHttpRequest){
+				  xmlhttp=new XMLHttpRequest();
+				}else{
+				  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange=function(){
+					if (xmlhttp.readyState==4 && xmlhttp.status==200){
+						if(!!fn) fn(xmlhttp.responseText);
+					}
+				}
+				xmlhttp.open("GET",url+"?_="+(new Date()).getTime(),true);
+				xmlhttp.send();
+			}
+		</script>
+		<style>
+			* {
+				backface-visibility: hidden;
+			}
+			::-webkit-scrollbar {
+				width: 0px;
+			}
+			::-webkit-scrollbar-button {}
+			::-webkit-scrollbar-track {
+				background-color: rgba(225, 225, 225, 0);
+			}
+			::-webkit-scrollbar-track-piece {
+				background-color: rgba(225, 225, 225, 0);
+				-webkit-border-radius: 4px;
+			}
+			::-webkit-scrollbar-thumb {
+				background-color: rgba(225, 225, 225, 0);
+				border: solid 1px #C0C0C0;
+				border-radius: 4px;
+			}
+			::-webkit-scrollbar-corner { 
+				background-color: rgba(225, 225, 225, 0);
+			}
+			::-webkit-resizer {
+				background-repeat: no-repeat;
+				background-position: bottom right;
+			}
+			::-webkit-scrollbar-thumb:hover {
+				background-color: rgba(225, 225, 225, 0);
+			}
+			body {
+				margin: 0;
+				padding: 0;
+				font-size: 0px;
+				font-family: 'Helvetica Neue', Helvetica, sans-serif;
+				-webkit-user-select: none;
+				overflow: hidden;
+				background-color: rgba(185, 185, 185, 0.19);
+				opacity: 0;
+				transition: opacity 0.25s;
+				-webkit-transition: opacity 0.25s;
+			}
+			body.show{
+				opacity: 1;
+			}
+			body>div {
+				transform: scale(1, 1);
+				-webkit-transform: scale(1, 1);
+			}
+			ul {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			a {
+				cursor: pointer;
 			}
 		</style>
-		<style id="androidTransitionStyle">
-			nav.menuNavMenu{
-				transition:-webkit-transform 0.4s;
-				-webkit-transition:-webkit-transform 0.4s;
+		<script type="text/javascript">
+			var touchLabel = ["input", "select", "button", "a"];
+			document.ontouchstart = function(e) {
+				if(touchLabel.indexOf(e.target.localName) == -1)
+					event.preventDefault();
 			}
-			nav.navMenu{
-				transition:-webkit-transform 0.4s;
-				-webkit-transition:-webkit-transform 0.4s;
+			var $={};
+			function initIndex(){
+				var cssList = [];
+				cssList.push("a");
+				loadCss(cssList,function(){
+					document.body.className="show";
+				});
+				$.pageInit();
 			}
-		</style>
+		</script>
 	</head>
+
 	<body>
-		<div>
-			<style>
-				.loginFormDiv{
-					width: 100%;
-					height: calc(100% - 67px);
-				}
-				.loginFormDiv>ul{
-					margin-top: 20px;
-					height: auto;
-				}
-				.loginFormDiv>ul>li{
-					font-size: 16px;
-				}
-				.loginFormDiv>ul>li:last-child{
-					margin-top: 10px;
-				}
-				.loginFormDiv>ul>li>span{
-					width: 60%;
-					height: 100%;
-					display: block;
-					position: absolute;
-					top: 0px;
-					right: 0px;
-					font-size: 16px;
-					background-color: #FFFFFF;
-					line-height: 36px;
-				}
-				.loginFormDiv>ul>li>span>input.switch{
-					position: absolute;
-					right: 65px;
-					top: 37px;
-				}
-				.loginFormDiv>button{
-					width: 94%;
-				    height: 40px;
-				    background-color: #3697F7;
-				    box-shadow: 0px 0px 3px #333333;
-				    border: 1px #3697F7 solid;
-				    box-shadow: inset 0px 0px 3px #999999;
-				    display: block;
-				    margin: 0 auto;
-				    margin-top: 35px;
-				    outline: none;
-				    color: #FFFFFF;
-				    font-size: 17px;
-				    line-height: 40px;
-				    font-weight: 600;
-				    transition: background-color 0.25s;
-				    -webkit-transition: background-color 0.25s;
-				    border-radius: 3px;
-				}
-				.loginFormDiv>button:active{
-					background-color: #2A5CB1;
-				}
-				.userName.listInput,.passWord.listInput{
-					height: 17px;
-				    line-height: 22px;
-				    box-sizing: content-box;
-				    padding-top: 15px;
-				    padding-bottom: 15px;
-				}
-			</style>
+		<div class="currentPage">
 			<header class="header">
-				<h4>移动管理系统</h4>
-				<a style="visibility: hidden;"></a>
-				<a class="help"><span class="glyphicon glyphicon-info-sign"></span></a>
+				<h4>会员管理</h4>
 			</header>
 			<div class="loginFormDiv">
 				<ul class="list">
 					<li>
 						账号
-						<input class="userName listInput" type="text" placeholder="请输入账号" />
+						<input class="userName listInput" type="text" placeholder="请输入安装登记手机号" />
 					</li>
 					<li>
 						密码
-						<input class="passWord listInput" type="password" placeholder="请输入密码"/>
+						<input class="passWord listInput" type="password" placeholder="密码为手机号后4位" />
 					</li>
 					<li>
 						自动登录
 						<span>
-							<input type="checkbox" class="switch"/>
-						</span>
+						<input type="checkbox" class="switch autoLogin"/>
+					</span>
 					</li>
 				</ul>
-				<button>登录</button>
+				<button class="submitLogin">登录</button>
 			</div>
-		</div>
-		<script>
-			loadJs("jquery-1.7.2",function(){
-				loadJs("init",function(){
-					$.saveHTMLInit();
-					$.deleteHTML();
-					loadJs("openPage",function(){
-						function isWeiXin(){
-						    var ua = window.navigator.userAgent.toLowerCase();
-						    if(ua.match(/MicroMessenger/i) == 'micromessenger'){
-						        return true;
-						    }else{
-						        return false;
-						    }
+			<script>
+				$.pageInit = function() {
+					$=Zepto;
+					loadJs(["b"], function() {
+						$.baseUrl = $.getRootPathAndPort();
+						var user_name = localStorage.getItem("user_name");
+						var user_pwd = localStorage.getItem("user_pwd");
+						if(!!user_name) {
+							$(".userName").val(user_name);
+							$(".passWord").val(user_pwd);
+							$(".autoLogin")[0].checked=true
 						}
-						$.isWeiXin=isWeiXin();
-						if($.isWeiXin&&$.isAndroid){
-							$("#ifWxStyle").remove();
-						}
-						if(!$.isAndroid)
-							$("#androidTransitionStyle").remove();
-		//				$.preLoadPage("index.html");
-		//				$.preLoadPage("option.html");
-		//				$.preLoadPage("menu.html");
-		//				$.preLoadPage("confirm.html");
-		//				$.preLoadPage("payment.html");
-		//				$.preLoadPage("checkedRoom.html");
-		//				$.preLoadPage("packageDetails.html");
-		//				$.preLoadPage("remarks.html");
-						$.init=function(){
-							loadJsM(["createConfirmBox","sendSatateAjax"],function(){
-								if($("foot").length==2){
-									$("foot:eq(1)").remove();
-								}
-								$.ajaxSetup({cache:false});
-								$(".userName").val(localStorage.getItem("userName"));
-								$(".passWord").val(localStorage.getItem("passWord"));
-								if(!!localStorage.getItem("userName")){
-									$(".loginFormDiv>ul>li>span>input.switch")[0].checked=true;
-								}
-								
-								$.tap(".loginFormDiv>button",function(){
-									var username=$(".userName").val();
-									var password=$(".passWord").val();
-									if(!username||!password){
-										$.createConfirmBoxOK({"title":"系统提示","content":"账号及密码不能为空"});
-										return;
-									}
-									$(".loading").css("display","block");
-									sendLogin(username,password,function(str){
-										$.data_currentUserId=$(str).text();
-										if(isNaN($.data_currentUserId)||str=="null"||str==null){
-											$(".loading").css("display","none");
-											$.createConfirmBoxOK({"title":"系统提示","content":"账号或密码错误"});
-											return;
-										}
-										if(!!$(".loginFormDiv>ul>li>span>input.switch")[0].checked){
-											localStorage.setItem("userName",username);
-											localStorage.setItem("passWord",password);
-										}else{
-											localStorage.removeItem("userName");
-											localStorage.removeItem("passWord");
-										}
-										try{
-											window.plus.login(username,password);
-										}catch(e){}
-										$.updateState("已登录");
-										$.initOpenPage();
-										$(".loading").css("display","none");
-										window.location.href="#main.html";
-									});
-								});
-								$.tap(".help",function(){
-									try{
-										window.plus.helpUse();
-									}catch(e){
-										$.altAuto("该环境不支持");
-									}
-								});
-								
-								function toBKLogin(){
-									window.setTimeout(function(){
-										var hash=window.location.hash;
-										$(window).off("hashchange").on("hashchange",function(){
-											window.location.hash=hash;
-											window.setTimeout(function(){
-												$.createConfirmBox({"title":"系统提示","content":"是否确认退出?","click":function(){
-													try{
-														window.plus.finish();
-													}catch(e){
-														$.altAuto("退出");
-														$(window).off("hashchange");
-													}
-												},"cancel":function(){
-													toBKLogin();
-												}});
-											},100);
-										});
-									},100);
-								}
-								toBKLogin();
-								
-								if(!$.data_ktvId){
-									sendGetDogName(function(str){
-										$.data_ktvId=$(str).find("DocumentElement>KtvInit>Ktvid").text();
-										$.data_dogName=$(str).find("DocumentElement>KtvInit>DogName").text();
-										try{
-											window.plus.saveValueWithKey("ktvId",$.data_ktvId);
-										}catch(e){}
-									});	
-								}
-								function sendLogin(username,password,parseDataFn){
-									$.ajax({
-										type:"get",
-										url:"xml/StaffLogin.xml",
-										data:"url="+encodeURIComponent("StaffLogin/"+username+","+password)+"&method=get",
-										dataType:"text",
-										success:function(str){
-											parseDataFn(str);
-										},
-										error:function(){
-											$.alt("登录失败!");
-										}
-									});
-								}
-								function sendGetDogName(parseDataFn){
-									$.ajax({
-										type:"get",
-										url:"xml/KtvInit.xml",
-										data:"url="+encodeURIComponent("KtvInit")+"&method=get",
-										dataType:"text",
-										success:function(str){
-											parseDataFn(str);
-										},
-										error:function(xhr){
-											$.alt("获取加密狗失败!");
-										}
-									});
-								}
-								window.sendState=function(stateName,describe){
-									$.updateState(stateName,describe);
+						function login(obj, fn) {
+							$.ajax({
+								type: "post",
+								url: $.baseUrl + "/userLogin",
+								dataType: "json",
+								data: obj,
+								success: function(json) {
+									if(!!fn)
+										fn(json);
 								}
 							});
 						}
-						$.init();
+						$(".submitLogin").tap(function() {
+							var obj={};
+							obj.user_name = $(".userName").val();
+							obj.user_pwd = $(".passWord").val();
+							if(!obj.user_name||!obj.user_pwd)
+								return $.alt("请填写账号及密码");
+							$(".loading").show();
+							login(obj, function(json) {
+								$(".loading").hide();
+								if(json.code == 1 && json.data != "error") {
+									var arr = json.data;
+									if(arr.length>0)
+										$.user=arr[0];
+									if($(".autoLogin")[0].checked==true){
+										localStorage.setItem("user_name", obj.user_name);
+										localStorage.setItem("user_pwd", obj.user_pwd);
+									}else{
+										localStorage.setItem("user_name", "");
+										localStorage.setItem("user_pwd", "");
+									}
+									$.toHref("memberInfo.html");
+									
+								} else {
+									$.alt("账号或密码错误！");
+								}
+							});
+						});
 					});
-				});
-			});
-		
-		
-			
-		</script>
+				};
+			</script>
+		</div>
 	</body>
 	<foot>
 		<div class="confirmBox">
@@ -296,27 +223,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="confirmBoxInputNumber">
-			<div>
-				<span></span>
-				<span></span>
-				<input type="number" readonly="readonly" placeholder="" />
-				<ul>
-					<li>1</li>
-					<li>2</li>
-					<li>3</li>
-					<li>4</li>
-					<li>5</li>
-					<li>6</li>
-					<li>7</li>
-					<li>8</li>
-					<li>9</li>
-					<li class="confirmBoxInputNumberOK"><span class="glyphicon glyphicon-ok"></span></li>
-					<li>0</li>
-					<li class="confirmBoxInputNumberBackspace"><span class="glyphicon glyphicon-arrow-left"></span></li>
-				</ul>
-			</div>
-		</div>
 		<div class="confirmBoxOK">
 			<div>
 				<span></span>
@@ -327,11 +233,6 @@
 			</div>
 		</div>
 		<div class="loading" style="display: none;"></div>
-		<div class="tip" style="display: none;"></div>
-		<div class="bottomList">
-			<ul>
-				<li>取消</li>
-			</ul>
-		</div>
 	</foot>
+
 </html>

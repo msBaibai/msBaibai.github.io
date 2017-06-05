@@ -1,1 +1,0 @@
-(function(a){a.contrastJson=function(c,a,d){var e={rows:[]},b;for(b in c.rows){var f=a.rows[b];c.rows[b][d]!=f[d]&&e.rows.push(f)}return e}})($);

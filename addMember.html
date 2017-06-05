@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<div class="currentPage">
+			<header class="header">
+				<a class="goBack goBackIcon"></a>
+				<h4 var="memberTitleText"></h4>
+			</header>
+			<label class="titleLabel">请填写会员信息:</label>
+			<form class="formMember" onsubmit="return false;">
+				<ul class="list">
+					<li>会员姓名<input type="text" name="member_name" class="listInput" placeholder="点击此处填写会员姓名" /></li>
+					<li>联系方式<input type="number" name="member_phone" class="listInput" placeholder="点击此处填写会员电话" /></li>
+					<li>会员积分<input type="number" name="member_integral" class="listInput" placeholder="点击此处填写会员积分" /></li>
+				</ul>
+				<input type="hidden" name="member_id"/>
+				<button type="button" class="payButton">提交</button>
+			</form>
+			
+			<script>
+				$.pageInit=function(){
+					$(".formMember").createModel();
+					if(!!$.currentParam){
+						bodyData.memberTitleText="编辑会员";
+						formMember.member_id=$.currentParam;
+						var obj=$.memberData.take("member_id",$.currentParam);
+						$.JSONToForm(obj,formMember);
+					}else{
+						bodyData.memberTitleText="新增会员";
+					}
+					$(".payButton").tap(function(){
+						var obj=$(".formMember").formToJSON();
+						if(!obj.member_name||!obj.member_phone||!obj.member_integral)
+							return $.alt("请填写会员姓名、电话及积分");
+						if(isNaN(obj.member_phone)||obj.member_phone.length!=11)
+							return $.alt("电话必须是11位数字");
+						if(isNaN(obj.member_integral))
+							return $.alt("积分必须是数字");
+						if(obj.member_integral>10000000)
+							return $.alt("积分值过大");
+						if(!!$.currentParam){
+							var mObj=$.memberData.take("member_id",$.currentParam);
+							$.extend(mObj,obj);
+							delete mObj["PY"];
+							$.memberData.upd(mObj,function(){
+								$.toBack();
+							});
+						}else{
+							$.memberData.add(obj,function(){
+								$.toBack();
+							});
+						}	
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>

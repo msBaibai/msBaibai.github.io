@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<div class="currentPage">
+			<style>
+				.list>li{
+					transition: -webkit-transform 0.25s;
+				}
+				.list>li.active{
+					transform: translateX(-100px);
+				}
+				.list>li>span{
+					position: absolute;
+				    width: 50px;
+				    height: 48px;
+				    text-align: center;
+				    color: #FFFFFF;
+				    font-size: 14px;
+				    font-weight: bold;
+				}
+				.list>li>span:nth-of-type(1){
+					right: -50px;
+				    background-color: #3697F7;
+				}
+				.list>li>span:nth-of-type(2){
+					right: -100px;
+				    background-color: #D66666;
+				}
+				.forIscroll{
+					width: 100%;
+					height: calc( 100% - 100px );
+					position: relative;
+					overflow: hidden;
+				}
+				.forIscroll>div{
+					width: 100%;
+					height: auto;
+					position: absolute;
+				}
+				.sreachDiv{
+					width: 100%;
+					height: 50px;
+					position: relative;
+				}
+				.sreachDiv>input{
+					width: 90%;
+					height: 25px;
+					position: absolute;
+					left: 0;
+					bottom: 0;
+					right: 0;
+					top: 0;
+					margin: auto;
+					border: 1px #C0C0C0 solid;
+					border-radius: 5px;
+				}
+				.badge{
+				    position: absolute;
+				    height: 12px;
+				    right: 15px;
+				    top: 0;
+				    bottom: 0;
+				    margin: auto;
+				    background-color: #4B9FD8;
+				}
+			</style>
+			<header class="header">
+				<a style="display: none;"></a>
+				<h4>会员列表</h4>
+				<a class="addMember">添加</a>
+			</header>
+			<form class="sreachDiv">
+				<input type="search" placeholder="请输入姓名或姓名拼音首字母或手机号进行快速检索" />
+			</form>
+			<div class="forIscroll">
+				<div>
+					<ul class="memberBodyData list none">
+						<li memberId="${obj.member_id}">${obj.member_name}(${obj.member_phone})<i class="badge">${obj.member_integral}</i><span class="update">修改</span><span class="delete">删除</span></li>
+					</ul>
+				</div>
+			</div>
+			<script>
+				$.pageInit = function() {
+					$(".loading").show();
+					$.initData(["member"],function(){
+						$(".loading").hide();
+						$(".memberBodyData").createBodyData();
+						for(var i in $.memberData){
+							if($.memberData.hasOwnProperty(i)){
+								var obj=$.memberData[i];
+								if(!!obj.member_name)
+									obj.PY=$.pinyin.getCamelChars(obj.member_name);
+							}
+						}
+						var tempData=$.jsonSort($.memberData,"member_id","desc");
+						tempData=$.sliceArrListData(tempData,100);
+						if(tempData.hasOwnProperty(1))
+							memberBodyData.data=tempData[1];
+						if($(".forIscroll").length==1)
+							$.myScroll=new IScroll(".forIscroll");
+						$(".addMember").tap(function(){
+							$.currentParam="";
+							$.toHref("addMember.html");
+						});
+						$.tap(".memberBodyData>li",function(){
+							var bol=$(this).hasClass("active");
+							$(".memberBodyData>li.active").removeClass("active");
+							if(!bol)
+								$(this).addClass("active");
+						});
+						$.tap(".memberBodyData>li>span.update",function(){
+							$.currentParam=$(this).parent().attr("memberId");
+							$.toHref("addMember.html");
+						});
+						$.tap(".memberBodyData>li>span.delete",function(){
+							var id=$(this).parent().attr("memberId");
+							$.createConfirmBox({"title":"系统提示","content":"是否确认删除该条信息?","click":function(){
+								var obj=$.memberData.take("member_id",id);
+								$.memberData.del(obj,function(){
+									memberBodyData.data=$.memberData;
+								});
+							}});
+						});
+						$(".sreachDiv").sub(function(){
+							$(".loading").show();
+							var val=$(".sreachDiv>input").val();
+							var arr=$.searchArrListDataLike($.memberData,val,["PY","member_name","member_phone"]);
+							memberBodyData.data=arr;
+							$.myScroll.refresh();
+							$(".loading").hide();
+						});
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>
