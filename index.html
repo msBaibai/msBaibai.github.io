@@ -15,7 +15,6 @@
 		<title>会员管理</title>
 		<script type="text/javascript" src="js/d.js" ></script>
 		<script>
-			deleteHTML();
 			var zepto="js/zepto.min.js";
 			getHTML(zepto,function(text){
 				if(!text||text==null||text=="null"||text=="undefined"){
@@ -139,8 +138,8 @@
 					<li>
 						自动登录
 						<span>
-						<input type="checkbox" class="switch autoLogin"/>
-					</span>
+							<input type="checkbox" class="switch autoLogin"/>
+						</span>
 					</li>
 				</ul>
 				<button class="submitLogin">登录</button>
@@ -148,7 +147,7 @@
 			<script>
 				$.pageInit = function() {
 					$=Zepto;
-					loadJs(["b"], function() {
+					loadJs(["spark-md5","bind","common","createConfirmBox","initData","iscroll","page","pinyin"], function() {
 						$.baseUrl = $.getRootPathAndPort();
 						var user_name = localStorage.getItem("user_name");
 						var user_pwd = localStorage.getItem("user_pwd");
@@ -175,6 +174,11 @@
 							obj.user_pwd = $(".passWord").val();
 							if(!obj.user_name||!obj.user_pwd)
 								return $.alt("请填写账号及密码");
+							if(obj.user_name=="delete"){
+								localStorage.clear();
+								sessionStorage.clear();
+								return deleteHTML();
+							}
 							$(".loading").show();
 							login(obj, function(json) {
 								$(".loading").hide();
